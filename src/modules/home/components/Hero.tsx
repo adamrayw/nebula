@@ -13,18 +13,18 @@ const Hero = () => {
               </span>
             </div>
             <h1 className="text-heading-1">
-              Manage your files with ease
+              The best cloud storage for your files.
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              A powerful file management system that helps you organize, share,
-              and secure your digital assets. Simple, fast, and reliable.
+              Keep your files safe and access them from any device, anywhere you
+              go. Share files with anyone and collaborate on documents
             </p>
             <div className="mt-10 flex items-center gap-x-6">
               <Button className="btn-primary" asChild>
                 <Link to="/register">Get started</Link>
               </Button>
               <Link
-                to="/features"
+                to="#features"
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
                 Learn more <span aria-hidden="true">→</span>
