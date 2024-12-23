@@ -16,25 +16,44 @@ import {
 import { Input } from "@/modules/core/components/design-system/ui/input";
 import { Label } from "@/modules/core/components/design-system/ui/label";
 import { AlertCircle } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { Link, useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
 import { ISignIn } from "@/types/inputSignin";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "@/api/auth/login";
+import { toast } from "@/hooks/use-toast";
 
 const SignInForm = () => {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
   const {
     register,
     handleSubmit,
-    watch,
+    getValues,
     formState: { errors },
   } = useForm<ISignIn>();
 
-  const onSubmit: SubmitHandler<ISignIn> = async (data) => {
-    console.log(data);
+  const navigate = useNavigate();
+  const mutation = useMutation({
+    mutationFn: (newData: ISignIn) => login({ data: newData }),
+  });
+
+  const onSubmit = () => {
+    const data = {
+      email: getValues("email"),
+      password: getValues("password"),
+    };
+
+    mutation.mutate(data);
   };
+
+  if (mutation.isSuccess) {
+    toast({
+      // title: "Success",
+      description: "Welcome back to Nebula!",
+    });
+    navigate("/dashboard");
+  }
+
+  console.log(mutation);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-4">
@@ -63,15 +82,13 @@ const SignInForm = () => {
             <div className="space-y-4">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="space-y-4">
-                  {/* <div>
-          <Label htmlFor="fullname">Full name</Label>
-          <Input type="text" name="fullName" placeholder="Nebulo" />
-        </div> */}
-                  {error && (
+                  {mutation.isError && (
                     <Alert variant="destructive">
                       <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Ooppss!</AlertTitle>
-                      <AlertDescription className="">{error}</AlertDescription>
+                      <AlertTitle>Error</AlertTitle>
+                      <AlertDescription className="">
+                        {mutation.error.message}
+                      </AlertDescription>
                     </Alert>
                   )}
                   <div>
@@ -91,12 +108,8 @@ const SignInForm = () => {
                     />
                   </div>
                   <div className="">
-                    {loading ? (
-                      <Button
-                        type="submit"
-                        className="btn-primary w-full"
-                        disabled={loading}
-                      >
+                    {mutation.isPending ? (
+                      <Button type="submit" className="btn-primary w-full">
                         <LoadingSpinner />
                       </Button>
                     ) : (

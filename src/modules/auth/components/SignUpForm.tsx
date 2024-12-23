@@ -15,15 +15,42 @@ import {
 } from "@/modules/core/components/design-system/ui/card";
 import { Input } from "@/modules/core/components/design-system/ui/input";
 import { Label } from "@/modules/core/components/design-system/ui/label";
+import { ISignUp } from "@/types/inputSignup";
+import { useMutation } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router";
+import { useregister } from "@/api/auth/register";
+import { toast } from "@/hooks/use-toast";
 
 const SignUpForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, getValues } = useForm<ISignUp>();
+
+  const navigate = useNavigate();
+  const mutation = useMutation({
+    mutationFn: (newData: ISignUp) => useregister({ data: newData }),
+  });
+
+  const onSubmit = () => {
+    const data = {
+      fullName: getValues("fullName"),
+      email: getValues("email"),
+      password: getValues("password"),
+      login_provider: "credentials",
+    };
+
+    mutation.mutate(data);
+  };
+
+  if (mutation.isSuccess) {
+    toast({
+      title: "Sign up success!",
+      description: "You can now sign in to Nebula!",
+    });
+    navigate("/signin");
+  }
+
+  console.log(mutation)
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-4">
@@ -50,25 +77,31 @@ const SignUpForm = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <form className="space-y-4">
+              {mutation.isError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription className="">
+                    {mutation.error.message}
+                  </AlertDescription>
+                </Alert>
+              )}
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="fullname">Full name</Label>
-                    <Input type="text" name="fullName" placeholder="Nebula" />
+                    <Input
+                      type="text"
+                      placeholder="Nebula"
+                      {...register("fullName", { required: true })}
+                    />
                   </div>
-                  {error && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Ooppss!</AlertTitle>
-                      <AlertDescription className="">{error}</AlertDescription>
-                    </Alert>
-                  )}
                   <div>
                     <Label htmlFor="email">Email</Label>
                     <Input
                       type="email"
                       placeholder="nebula@domain.com"
-                      onChange={(e) => setEmail(e.target.value)}
+                      {...register("email", { required: true })}
                     />
                   </div>
                   <div>
@@ -76,21 +109,17 @@ const SignUpForm = () => {
                     <Input
                       type="password"
                       placeholder="******"
-                      onChange={(e) => setPassword(e.target.value)}
+                      {...register("password", { required: true })}
                     />
                   </div>
                   <div className="">
-                    {loading ? (
-                      <Button
-                        type="submit"
-                        className="btn-primary w-full"
-                        disabled={loading}
-                      >
+                    {mutation.isPending ? (
+                      <Button type="submit" className="btn-primary w-full">
                         <LoadingSpinner />
                       </Button>
                     ) : (
                       <Button type="submit" className="btn-primary w-full">
-                        Sign in
+                        Sign up
                       </Button>
                     )}
                   </div>
