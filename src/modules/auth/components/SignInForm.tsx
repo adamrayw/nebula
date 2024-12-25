@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form";
 import { ISignIn } from "@/types/inputSignin";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "@/api/auth/login";
-import { toast } from "@/hooks/use-toast";
+import toast from "react-hot-toast";
 
 const SignInForm = () => {
   const {
@@ -46,14 +46,9 @@ const SignInForm = () => {
   };
 
   if (mutation.isSuccess) {
-    toast({
-      // title: "Success",
-      description: "Welcome back to Nebula!",
-    });
+    toast("Welcome back to Nebula!");
     navigate("/dashboard");
   }
-
-  console.log(mutation);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-4">
@@ -85,9 +80,9 @@ const SignInForm = () => {
                   {mutation.isError && (
                     <Alert variant="destructive">
                       <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Error</AlertTitle>
+                      <AlertTitle>Ooppss!</AlertTitle>
                       <AlertDescription className="">
-                        {mutation.error.message}
+                        Invalid email or password
                       </AlertDescription>
                     </Alert>
                   )}
@@ -96,16 +91,30 @@ const SignInForm = () => {
                     <Input
                       type="email"
                       placeholder="nebulo@domain.com"
+                      className={`${errors.email ? "border-red-500" : ""}`}
                       {...register("email", { required: true })}
                     />
+                    <label htmlFor="email">
+                      {errors.email?.type === "required" && (
+                        <span className="text-red-500 text-xs ">Email is required</span>
+                      )}
+                    </label>
                   </div>
                   <div>
                     <Label htmlFor="password">Password</Label>
                     <Input
                       type="password"
                       placeholder="******"
+                      className={`${errors.password ? "border-red-500" : ""}`}
                       {...register("password", { required: true })}
                     />
+                    <label htmlFor="password">
+                      {errors.password?.type === "required" && (
+                        <span className="text-red-500 text-xs">
+                          Password is required
+                        </span>
+                      )}
+                    </label>
                   </div>
                   <div className="">
                     {mutation.isPending ? (

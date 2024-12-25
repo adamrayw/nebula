@@ -21,10 +21,15 @@ import { AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { useregister } from "@/api/auth/register";
-import { toast } from "@/hooks/use-toast";
+import toast from "react-hot-toast";
 
 const SignUpForm = () => {
-  const { register, handleSubmit, getValues } = useForm<ISignUp>();
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<ISignUp>();
 
   const navigate = useNavigate();
   const mutation = useMutation({
@@ -43,14 +48,11 @@ const SignUpForm = () => {
   };
 
   if (mutation.isSuccess) {
-    toast({
-      title: "Sign up success!",
-      description: "You can now sign in to Nebula!",
-    });
+    toast("You can now sign in to Nebula!");
     navigate("/signin");
   }
 
-  console.log(mutation)
+  console.log(errors);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-4">
@@ -93,15 +95,30 @@ const SignUpForm = () => {
                     <Input
                       type="text"
                       placeholder="Nebula"
-                      {...register("fullName", { required: true })}
+                      className={`${errors.fullName ? "border-red-500" : ""}`}
+                      {...register("fullName", {
+                        required: true,
+                        minLength: 4,
+                      })}
                     />
+                    <label htmlFor="fullname">
+                      <span className="text-red-500 text-xs">
+                        {errors.fullName?.type === "required" &&
+                          "Full name is required"}
+                        {errors.fullName?.type === "minLength" &&
+                          "Full name must be at least 4 characters"}
+                      </span>
+                    </label>
                   </div>
                   <div>
                     <Label htmlFor="email">Email</Label>
                     <Input
                       type="email"
                       placeholder="nebula@domain.com"
-                      {...register("email", { required: true })}
+                      className={`${errors.email ? "border-red-500" : ""}`}
+                      {...register("email", {
+                        required: true,
+                      })}
                     />
                   </div>
                   <div>
@@ -109,8 +126,20 @@ const SignUpForm = () => {
                     <Input
                       type="password"
                       placeholder="******"
-                      {...register("password", { required: true })}
+                      className={`${errors.password ? "border-red-500" : ""}`}
+                      {...register("password", {
+                        required: true,
+                        minLength: 6,
+                      })}
                     />
+                    <label htmlFor="password">
+                      <span className="text-red-500 text-xs">
+                        {errors.password?.type === "required" &&
+                          "Password is required"}
+                        {errors.password?.type === "minLength" &&
+                          "Password must be at least 6 characters"}
+                      </span>
+                    </label>
                   </div>
                   <div className="">
                     {mutation.isPending ? (
