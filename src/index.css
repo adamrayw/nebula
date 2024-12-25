@@ -126,7 +126,7 @@ body {
   }
 
   .ProgressRoot {
-    @apply relative overflow-hidden bg-white rounded-full w-full h-4;
+    @apply relative overflow-hidden bg-gray-200 rounded-full w-full h-4;
   }
 
   .ProgressIndicator {
