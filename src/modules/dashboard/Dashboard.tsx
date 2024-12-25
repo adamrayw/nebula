@@ -80,7 +80,7 @@ const Dashboard = () => {
     <div className="grid grid-cols-4 relative">
       <div className="col-span-3 border-r h-screen px-10">
         <SearchBtn setSearch={setSearch} refetch={refetch} />
-        <div className="up-btn fixed right-0 bottom-0 p-4 ">
+        <div className="up-btn fixed right-0 bottom-0 p-4 z-40">
           {/* <h1 className="text-heading-3 !font-normal !text-gray-800 mb-4">
             Main Library
           </h1> */}
