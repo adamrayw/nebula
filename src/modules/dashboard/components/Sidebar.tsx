@@ -23,6 +23,7 @@ import IUser from "@/types/IUser";
 import { Link } from "react-router";
 import * as Progress from "@radix-ui/react-progress";
 import { useGetUser } from "@/queries/useFetchUser";
+import { Separator } from "@/modules/core/components/design-system/ui/separator";
 
 const SidebarDashboard = () => {
   const [session, setSession] = useState<IUser>();
@@ -78,7 +79,7 @@ const SidebarDashboard = () => {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="space-y-4 bg-gray-100 p-6 shadow rounded-lg text-sm">
+            <div className="space-y-4 p-6 bg-white shadow-sm rounded-lg text-sm">
               <p className="font-semibold">Storage</p>
               <Progress.Root
                 className="ProgressRoot"
@@ -99,6 +100,9 @@ const SidebarDashboard = () => {
                 {(52428800 / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <Separator className="my-2" />
           </SidebarMenuItem>
           <SidebarMenuItem>
             <DropdownMenu>
