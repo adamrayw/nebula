@@ -48,13 +48,15 @@ import {
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
+  const [offset, setOffset] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, refetch } = useFetchFile(search);
+  const { data, isLoading, isError, refetch } = useFetchFile(search, offset);
 
   useEffect(() => {
     refetch();
-  }, [search, refetch]);
+  }, [search, refetch, offset]);
 
   const deleteHandler = useMutation({
     mutationFn: async (fileId: string) => {
@@ -75,6 +77,18 @@ const Dashboard = () => {
   if (isError) {
     toast.error("Failed to fetch files");
   }
+
+  const handlePrevious = () => {
+    if (offset <= 0) return;
+    setOffset(offset - 10);
+    setPage(page - 1);
+  };
+
+  const handleNext = () => {
+    if (page === data?.lastPage) return;
+    setOffset(offset + 10);
+    setPage(page + 1);
+  };
 
   return (
     <div className="grid grid-cols-4 relative">
@@ -104,7 +118,7 @@ const Dashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data?.map((file: IFile) => (
+                  {data?.data?.map((file: IFile) => (
                     <TableRow key={file.id}>
                       <TableCell className="font-medium truncate max-w-64">
                         <TooltipProvider>
@@ -166,7 +180,7 @@ const Dashboard = () => {
                 </TableBody>
               </Table>
               {isLoading && <p>Loading...</p>}
-              {data?.length === 0 && (
+              {data?.data?.length === 0 && (
                 <p className="text-center my-4 text-sm">
                   No files uploaded yet.
                 </p>
@@ -174,22 +188,59 @@ const Dashboard = () => {
             </div>
           </TabsContent>
         </Tabs>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        {data?.data?.length !== 0 && !isLoading && (
+          <Pagination className="pb-10">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePrevious()}
+                  className={`${
+                    page === 1
+                      ? "hover:cursor-pointer hover:bg-white"
+                      : "hover:cursor-pointer"
+                  }`}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink
+                  isActive={page === 1}
+                  onClick={() => {
+                    setOffset(0);
+                    setPage(1);
+                  }}
+                  className="hover:cursor-pointer"
+                >
+                  1
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink
+                  isActive={page === data?.lastPage}
+                  onClick={() => {
+                    setOffset(data?.lastPage ? data?.lastPage * 10 - 10 : 0);
+                    setPage(data?.lastPage || 1);
+                  }}
+                  className="hover:cursor-pointer"
+                >
+                  {data?.lastPage}
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => handleNext()}
+                  className={`${
+                    page === data?.lastPage
+                      ? "hover:cursor-pointer hover:bg-white"
+                      : "hover:cursor-pointer"
+                  }`}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
       <div className="px-4">Activity</div>
     </div>
