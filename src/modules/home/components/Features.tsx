@@ -4,7 +4,7 @@ const features = [
   {
     name: "Cloud Storage",
     description:
-      "Store your files securely in the cloud with unlimited storage capacity and instant access.",
+      "Store your files securely in the cloud with 50MB of free storage.",
     icon: Cloud,
   },
   {
@@ -30,11 +30,10 @@ const Features = () => {
             Powerful Features
           </h2>
           <p className="text-heading-2">
-            Everything you need to store and manage your files.
+            Everything you need to store files securely.
           </p>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            Nebula offers a wide range of features to help you manage your files. From cloud storage to advanced
-            security, we've got you covered.
+            Nebula offers a wide range of features to help you store files in the cloud.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">

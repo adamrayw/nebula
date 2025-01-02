@@ -9,7 +9,7 @@ const Hero = () => {
           <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl lg:flex-shrink-0 lg:pt-8">
             <div className="mt-24 sm:mt-32 lg:mt-16">
               <span className="rounded-full bg-blue-500/10 px-3 py-1 text-sm font-semibold leading-6 text-blue-600 ring-1 ring-inset ring-blue-500/20">
-                GET 100MB FREE!🎉
+                GET 50MB FREE!🎉
               </span>
             </div>
             <h1 className="text-heading-1">
@@ -17,7 +17,7 @@ const Hero = () => {
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
               Keep your files safe and access them from any device, anywhere you
-              go. Share files with anyone and collaborate on documents
+              go. Share files your way, with anyone you want.
             </p>
             <div className="mt-10 flex items-center gap-x-6">
               <Button className="btn-primary" asChild>

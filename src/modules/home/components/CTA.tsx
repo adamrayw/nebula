@@ -9,15 +9,15 @@ const CTA = () => {
           <h2 className="text-heading-2 !text-white">
             Ready to get started?
             <br />
-            Try our file manager today.
+            Get your free storage now!
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-blue-100">
-            Join thousands of users who trust our platform for their file
-            management needs. Start with our free plan and upgrade anytime.
+            Sign up for Nebula today and get 50MB of free storage. No credit
+            card required.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Button className="btn-white" asChild>
-              <Link to="/register">Get started</Link>
+              <Link to="/signup">Sign up</Link>
             </Button>
             <Link
               to="/pricing"
