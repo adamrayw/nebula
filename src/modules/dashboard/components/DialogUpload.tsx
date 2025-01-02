@@ -11,7 +11,6 @@ import { Input } from "@/modules/core/components/design-system/ui/input";
 import { Label } from "@/modules/core/components/design-system/ui/label";
 import { FileUp, UploadCloudIcon } from "lucide-react";
 import { formatFileSize } from "../utils/formatFileSize";
-import { uploadFile } from "@/api/uploadFile";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { IFile } from "@/types/IFile";
 import { useForm } from "react-hook-form";
@@ -20,6 +19,7 @@ import { Progress } from "@/modules/core/components/design-system/ui/progress";
 import { fileTypeFromBlob } from "file-type";
 import toast from "react-hot-toast";
 import { useGetUser } from "@/queries/useFetchUser";
+import { uploadFile } from "@/api/file";
 
 const DialogUpload = () => {
   const { register, handleSubmit, setValue, getValues, watch } =
@@ -32,7 +32,7 @@ const DialogUpload = () => {
 
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
-      uploadFile({
+      uploadFile('/file/uploadFile', {
         data,
         onUploadProgress: (progressEvent) => {
           const percentComplete = Math.round(
