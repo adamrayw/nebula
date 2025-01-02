@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../../core/components/design-system/ui/sidebar";
-import { ChevronUp, Files, LogOut } from "lucide-react";
+import { ChevronUp, Files, HardDrive, LogOut, Star } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,6 +42,11 @@ const SidebarDashboard = () => {
       title: "My Files",
       url: "/dashboard",
       icon: <Files />,
+    },
+    {
+      title: "Starred",
+      url: "/starred",
+      icon: <Star />,
     },
   ];
 
@@ -80,7 +85,15 @@ const SidebarDashboard = () => {
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="space-y-4 p-6 bg-white shadow-sm rounded-lg text-sm">
-              <p className="font-semibold">Storage</p>
+              <div className="flex justify-between items-center">
+                <p className="font-semibold">Usage</p>
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <HardDrive size={20} />
+                  <p className="font-thin text-sm">Upgrade</p>
+                </Button>
+                {/* <div className="upgrade flex items-center space-x-1 bg-gray-100 p-1 rounded-lg shadow-sm hover:cursor-pointer ">
+                </div> */}
+              </div>
               <Progress.Root
                 className="ProgressRoot"
                 value={((data?.totalFileSize ?? 0) / (data?.limit ?? 1)) * 100}
