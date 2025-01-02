@@ -80,7 +80,7 @@ const Footer = () => {
               <span className="text-lg font-semibold text-white">NebuloBox</span>
             </div>
             <p className="text-sm leading-6 text-gray-300">
-              Making file management simple, secure, and efficient for teams and individuals.
+              Making cloud storage secure and easy to use for everyone.
             </p>
             <div className="flex space-x-6">
               {navigation.social.map((item) => (
