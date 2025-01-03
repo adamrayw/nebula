@@ -195,7 +195,7 @@ const Dashboard = () => {
             </div>
           </TabsContent>
         </Tabs>
-        {data?.data?.length !== 0 && !isLoading && (
+        {data?.data?.length !== 0  && (data?.lastPage  ?? 0) > 1 && !isLoading  && (
           <Pagination className="pb-10">
             <PaginationContent>
               <PaginationItem>
