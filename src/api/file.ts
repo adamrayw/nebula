@@ -1,4 +1,4 @@
-import fileService from "@/lib/axiosInstance";
+import fileService from "@/pages/core/lib/axiosInstance";
 import axios, { AxiosProgressEvent } from "axios";
 
 export const get = async (url: string): Promise<unknown> => {

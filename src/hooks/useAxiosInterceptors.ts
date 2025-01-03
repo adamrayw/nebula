@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
-import fileService from '@/lib/axiosInstance';
+import fileService from '@/pages/core/lib/axiosInstance';
 
 const useAxiosInterceptors = () => {
     const navigate = useNavigate();
