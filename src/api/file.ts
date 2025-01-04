@@ -1,19 +1,20 @@
 import fileService from "@/pages/core/lib/axiosInstance";
 import axios, { AxiosProgressEvent } from "axios";
 
-export const get = async (url: string): Promise<unknown> => {
+export const get = async <T>(url: string): Promise<T> => {
     try {
         const response = await fileService.get(`${url}`)
 
-        return response.data;
+        return response.data as T;
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message)
         }
+        throw new Error('Failed to fetch data')
     }
 }
 
-export const post = async (url: string, data: unknown): Promise<unknown> => {
+export const post = async <T>(url: string, data: unknown): Promise<T> => {
     try {
         const response = await fileService.post(`${url}`, data)
 
@@ -22,10 +23,11 @@ export const post = async (url: string, data: unknown): Promise<unknown> => {
         if (error instanceof Error) {
             throw new Error(error.message)
         }
+        throw new Error('Failed to fetch data')
     }
 }
 
-export const deleteFile = async (url: string, fileId: string): Promise<unknown> => {
+export const deleteFile = async <T>(url: string, fileId: string): Promise<T> => {
     try {
         const response = await fileService.delete(`${url}${fileId}`)
 
@@ -34,10 +36,11 @@ export const deleteFile = async (url: string, fileId: string): Promise<unknown> 
         if (error instanceof Error) {
             throw new Error(error.message)
         }
+        throw new Error('Failed to fetch data')
     }
 }
 
-export const uploadFile = async (url: string, { data, onUploadProgress }: { data: FormData, onUploadProgress: (progressEvent: AxiosProgressEvent) => void }): Promise<void> => {
+export const uploadFile = async <T>(url: string, { data, onUploadProgress }: { data: FormData, onUploadProgress: (progressEvent: AxiosProgressEvent) => void }): Promise<T> => {
 
     try {
         const token = sessionStorage.getItem('token')
@@ -54,6 +57,7 @@ export const uploadFile = async (url: string, { data, onUploadProgress }: { data
         if (error instanceof Error) {
             throw new Error(error.message)
         }
+        throw new Error('Failed to fetch data')
     }
 
 }
