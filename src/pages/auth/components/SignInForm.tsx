@@ -1,10 +1,5 @@
 import LoadingSpinner from "@/pages/core/components/design-system/LoadingSpinner";
 import Logo from "@/pages/core/components/design-system/Logo";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/pages/core/components/design-system/ui/alert";
 import { Button } from "@/pages/core/components/design-system/ui/button";
 import {
   Card,
@@ -15,13 +10,13 @@ import {
 } from "@/pages/core/components/design-system/ui/card";
 import { Input } from "@/pages/core/components/design-system/ui/input";
 import { Label } from "@/pages/core/components/design-system/ui/label";
-import { AlertCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { ISignIn } from "@/types/inputSignin";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { auth } from "@/api/user";
+import AlertError from "./AlertError";
 
 const SignInForm = () => {
   const {
@@ -33,7 +28,7 @@ const SignInForm = () => {
 
   const navigate = useNavigate();
   const mutation = useMutation({
-    mutationFn: (newData: ISignIn) => auth('/user/login', newData),
+    mutationFn: (newData: ISignIn) => auth("/user/login", newData),
   });
 
   const onSubmit = () => {
@@ -49,6 +44,10 @@ const SignInForm = () => {
     toast("Welcome back to Nebula!");
     navigate("/dashboard");
   }
+
+  const error = mutation.error
+    ? JSON.parse(mutation.error.message || "{}")
+    : mutation.error;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-4">
@@ -77,15 +76,7 @@ const SignInForm = () => {
             <div className="space-y-4">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="space-y-4">
-                  {mutation.isError && (
-                    <Alert variant="destructive">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Ooppss!</AlertTitle>
-                      <AlertDescription className="">
-                        Invalid email or password
-                      </AlertDescription>
-                    </Alert>
-                  )}
+                  {mutation.isError && <AlertError error={error} />}
                   <div>
                     <Label htmlFor="email">Email</Label>
                     <Input
@@ -96,7 +87,9 @@ const SignInForm = () => {
                     />
                     <label htmlFor="email">
                       {errors.email?.type === "required" && (
-                        <span className="text-red-500 text-xs ">Email is required</span>
+                        <span className="text-red-500 text-xs ">
+                          Email is required
+                        </span>
                       )}
                     </label>
                   </div>

@@ -1,10 +1,5 @@
 import LoadingSpinner from "@/pages/core/components/design-system/LoadingSpinner";
 import Logo from "@/pages/core/components/design-system/Logo";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/pages/core/components/design-system/ui/alert";
 import { Button } from "@/pages/core/components/design-system/ui/button";
 import {
   Card,
@@ -17,11 +12,11 @@ import { Input } from "@/pages/core/components/design-system/ui/input";
 import { Label } from "@/pages/core/components/design-system/ui/label";
 import { ISignUp } from "@/types/inputSignup";
 import { useMutation } from "@tanstack/react-query";
-import { AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { auth } from "@/api/user";
+import AlertError from "./AlertError";
 
 const SignUpForm = () => {
   const {
@@ -33,7 +28,7 @@ const SignUpForm = () => {
 
   const navigate = useNavigate();
   const mutation = useMutation({
-    mutationFn: (newData: ISignUp) => auth('/user/register', newData),
+    mutationFn: (newData: ISignUp) => auth("/user/register", newData),
   });
 
   const onSubmit = () => {
@@ -52,7 +47,9 @@ const SignUpForm = () => {
     navigate("/signin");
   }
 
-  console.log(errors);
+  const error = mutation.error
+    ? JSON.parse(mutation.error.message || "{}")
+    : mutation.error;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 px-4">
@@ -80,13 +77,7 @@ const SignUpForm = () => {
           <CardContent>
             <div className="space-y-4">
               {mutation.isError && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription className="">
-                    {mutation.error?.name}
-                  </AlertDescription>
-                </Alert>
+                <AlertError error={error} />
               )}
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="space-y-4">
@@ -129,7 +120,7 @@ const SignUpForm = () => {
                       className={`${errors.password ? "border-red-500" : ""}`}
                       {...register("password", {
                         required: true,
-                        minLength: 8,
+                        // minLength: 8,
                       })}
                     />
                     <label htmlFor="password">
