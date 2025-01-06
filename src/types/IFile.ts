@@ -1,3 +1,10 @@
+interface Starred {
+    id: string;
+    userId: string;
+    fileId: string;
+    createdAt: string;
+    updatedAt: string;
+}
 export interface IFile {
     id: string;
     name?: string;
@@ -9,4 +16,5 @@ export interface IFile {
     location?: string;
     createdAt?: string;
     updatedAt?: string;
+    starred: Starred
 }
