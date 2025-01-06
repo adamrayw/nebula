@@ -41,9 +41,9 @@ export const post = async <T>(url: string, data?: unknown): Promise<T> => {
     }
 }
 
-export const deleteFile = async <T>(url: string, fileId: string): Promise<T> => {
+export const remove = async <T>(url: string): Promise<T> => {
     try {
-        const response = await fileService.delete(`${url}${fileId}`)
+        const response = await instance.delete(`${url}`)
 
         return response.data;
     } catch (error) {

@@ -45,8 +45,9 @@ import {
   PaginationPrevious,
 } from "../core/components/design-system/ui/pagination";
 import { deleteFile } from "@/api/file";
-import { post } from "@/api/starred";
+import { post, remove } from "@/api/starred";
 import { AxiosError } from "axios";
+import { FaStar } from "react-icons/fa";
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
@@ -94,6 +95,22 @@ const Dashboard = () => {
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries()]);
       toast.success("File added to Starred", {
+        position: "bottom-center",
+        duration: 3000,
+      });
+    },
+    onError: (error: AxiosError) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleRemoveStarred = useMutation({
+    mutationFn: async (fileId: string) => {
+      return await remove(`/file/starred/${fileId}`);
+    },
+    onSuccess: () => {
+      Promise.all([queryClient.invalidateQueries()]);
+      toast.success("File removed from Starred", {
         position: "bottom-center",
         duration: 3000,
       });
@@ -168,19 +185,40 @@ const Dashboard = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Star
-                                  className="size-4 hover:cursor-pointer"
-                                  onClick={() => handleStarred.mutate(file.id)}
-                                />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Add to Starred</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          {file.starred !== null ? (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FaStar
+                                    className="size-4 hover:cursor-pointer text-yellow-400"
+                                    onClick={() =>
+                                      handleRemoveStarred.mutate(file.id)
+                                    }
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Remove to Starred</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          ) : (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Star
+                                    className="size-4 hover:cursor-pointer"
+                                    onClick={() =>
+                                      handleStarred.mutate(file.id)
+                                    }
+                                  />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Add to Starred</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+
                           <Popover>
                             <PopoverTrigger asChild>
                               <Button variant="ghost">
