@@ -25,7 +25,7 @@ import {
 import moment from "moment";
 import FileIcon from "./components/FileIcon";
 import { IFile } from "@/types/IFile";
-import { Download, Ellipsis, Trash } from "lucide-react";
+import { Download, Ellipsis, Star, Trash } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -45,6 +45,8 @@ import {
   PaginationPrevious,
 } from "../core/components/design-system/ui/pagination";
 import { deleteFile } from "@/api/file";
+import { post } from "@/api/starred";
+import { AxiosError } from "axios";
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
@@ -82,6 +84,22 @@ const Dashboard = () => {
     },
     onError: () => {
       toast.error("File Failed to delete");
+    },
+  });
+
+  const handleStarred = useMutation({
+    mutationFn: async (fileId: string) => {
+      return await post(`/file/starred/${fileId}`);
+    },
+    onSuccess: () => {
+      Promise.all([queryClient.invalidateQueries()]);
+      toast.success("File added to Starred", {
+        position: "bottom-center",
+        duration: 3000,
+      });
+    },
+    onError: (error: AxiosError) => {
+      toast.error(error.message);
     },
   });
 
@@ -149,38 +167,53 @@ const Dashboard = () => {
                         {moment(file.createdAt).format("LL")}
                       </TableCell>
                       <TableCell>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button variant="ghost">
-                              <Ellipsis />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-40 p-2" asChild>
-                            <div className="flex flex-col space-y-2 justify-start items-start">
-                              <Button
-                                variant="ghost"
-                                asChild
-                                className="w-full fex justify-start"
-                              >
-                                <a href={file.location}>
-                                  <Download />
-                                  Download
-                                </a>
+                        <div className="flex items-center">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Star
+                                  className="size-4 hover:cursor-pointer"
+                                  onClick={() => handleStarred.mutate(file.id)}
+                                />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Add to Starred</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button variant="ghost">
+                                <Ellipsis />
                               </Button>
-                              <Button
-                                variant="ghost"
-                                className="text-red-500 hover:text-red-700 w-full fex justify-start"
-                                onClick={() => {
-                                  deleteHandler.mutate(file.id);
-                                }}
-                              >
-                                <Trash />
-                                Delete
-                              </Button>
-                              {/* <Button variant="ghost">Delete</Button> */}
-                            </div>
-                          </PopoverContent>
-                        </Popover>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-40 p-2" asChild>
+                              <div className="flex flex-col space-y-2 justify-start items-start">
+                                <Button
+                                  variant="ghost"
+                                  asChild
+                                  className="w-full fex justify-start"
+                                >
+                                  <a href={file.location}>
+                                    <Download />
+                                    Download
+                                  </a>
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  className="text-red-500 hover:text-red-700 w-full fex justify-start"
+                                  onClick={() => {
+                                    deleteHandler.mutate(file.id);
+                                  }}
+                                >
+                                  <Trash />
+                                  Delete
+                                </Button>
+                                {/* <Button variant="ghost">Delete</Button> */}
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -195,50 +228,34 @@ const Dashboard = () => {
             </div>
           </TabsContent>
         </Tabs>
-        {data?.data?.length !== 0  && (data?.lastPage  ?? 0) > 1 && !isLoading  && (
-          <Pagination className="pb-10">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => handlePrevious()}
-                  className={`${
-                    page === 1
-                      ? "hover:cursor-pointer hover:bg-white"
-                      : "hover:cursor-pointer"
-                  }`}
-                />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink
-                  isActive={page === 1}
-                  onClick={() => {
-                    setOffset(0);
-                    setPage(1);
-                  }}
-                  className="hover:cursor-pointer"
-                >
-                  1
-                </PaginationLink>
-              </PaginationItem>
-              {(data?.lastPage ?? 0) > 1 && (data?.lastPage ?? 0) < 3 && (
+        {data?.data?.length !== 0 &&
+          (data?.lastPage ?? 0) > 1 &&
+          !isLoading && (
+            <Pagination className="pb-10">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => handlePrevious()}
+                    className={`${
+                      page === 1
+                        ? "hover:cursor-pointer hover:bg-white"
+                        : "hover:cursor-pointer"
+                    }`}
+                  />
+                </PaginationItem>
                 <PaginationItem>
                   <PaginationLink
-                    isActive={page === data?.lastPage}
+                    isActive={page === 1}
                     onClick={() => {
-                      setOffset(data?.lastPage ? data?.lastPage * 10 - 10 : 0);
-                      setPage(data?.lastPage || 1);
+                      setOffset(0);
+                      setPage(1);
                     }}
                     className="hover:cursor-pointer"
                   >
-                    {data?.lastPage}
+                    1
                   </PaginationLink>
                 </PaginationItem>
-              )}
-              {(data?.lastPage ?? 0) > 3 && (
-                <>
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
+                {(data?.lastPage ?? 0) > 1 && (data?.lastPage ?? 0) < 3 && (
                   <PaginationItem>
                     <PaginationLink
                       isActive={page === data?.lastPage}
@@ -253,21 +270,41 @@ const Dashboard = () => {
                       {data?.lastPage}
                     </PaginationLink>
                   </PaginationItem>
-                </>
-              )}
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => handleNext()}
-                  className={`${
-                    page === data?.lastPage
-                      ? "hover:cursor-pointer hover:bg-white"
-                      : "hover:cursor-pointer"
-                  }`}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
+                )}
+                {(data?.lastPage ?? 0) > 3 && (
+                  <>
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink
+                        isActive={page === data?.lastPage}
+                        onClick={() => {
+                          setOffset(
+                            data?.lastPage ? data?.lastPage * 10 - 10 : 0
+                          );
+                          setPage(data?.lastPage || 1);
+                        }}
+                        className="hover:cursor-pointer"
+                      >
+                        {data?.lastPage}
+                      </PaginationLink>
+                    </PaginationItem>
+                  </>
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handleNext()}
+                    className={`${
+                      page === data?.lastPage
+                        ? "hover:cursor-pointer hover:bg-white"
+                        : "hover:cursor-pointer"
+                    }`}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
       </div>
       <div className="px-4">Activity</div>
     </div>
