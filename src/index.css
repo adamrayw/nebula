@@ -1,17 +1,17 @@
-@import '@fontsource/inter/300.css';
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/500.css';
-@import '@fontsource/inter/600.css';
-@import '@fontsource/inter/700.css';
-@import '@fontsource/inter/800.css';
-@import '@fontsource/inter/900.css';
+@import "@fontsource/inter/300.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+@import "@fontsource/inter/900.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -98,30 +98,38 @@ body {
 
 @layer utilities {
   .brand {
-    @apply bg-blue-600 rounded-lg flex items-center justify-center !important
+    @apply bg-blue-600 rounded-lg flex items-center justify-center !important;
   }
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 font-semibold py-2 px-4 !important
+    @apply bg-blue-600 hover:bg-blue-700 font-semibold py-2 px-4 !important;
   }
   .btn-white {
-    @apply bg-white hover:bg-slate-100 text-blue-600 font-semibold !important
+    @apply bg-white hover:bg-slate-100 text-blue-600 font-semibold !important;
   }
   .card-container {
-    @apply mt-8 sm:mx-auto sm:w-full sm:max-w-md
+    @apply mt-8 sm:mx-auto sm:w-full sm:max-w-md;
   }
   .text-heading-1 {
-    @apply mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl
+    @apply mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl;
   }
   .text-heading-2 {
-    @apply mt-8 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl
+    @apply mt-8 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl;
   }
   .text-heading-3 {
-    @apply mt-6 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl
+    @apply mt-6 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl;
   }
   .text-heading-4 {
-    @apply mt-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl
+    @apply mt-4 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl;
   }
   .text-heading-5 {
-    @apply mt-4 text-lg font-bold tracking-tight text-gray-900 sm:text-xl
+    @apply mt-4 text-lg font-bold tracking-tight text-gray-900 sm:text-xl;
+  }
+
+  .ProgressRoot {
+    @apply relative overflow-hidden bg-gray-200 rounded-full w-full h-4;
+  }
+
+  .ProgressIndicator {
+    @apply bg-blue-600 h-full transition-transform duration-500 ease-in-out;
   }
 }

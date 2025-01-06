@@ -1,8 +1,8 @@
-import SignInForm from "./modules/auth/components/SignInForm";
-import SignUpForm from "./modules/auth/components/SignUpForm";
-import Dashboard from "./modules/dashboard/Dashboard";
-import DashboardLayout from "./modules/dashboard/DashboardLayout";
-import Home from "./modules/home/Home";
+import SignInForm from "./pages/auth/components/SignInForm";
+import SignUpForm from "./pages/auth/components/SignUpForm";
+import Dashboard from "./pages/dashboard/Dashboard";
+import DashboardLayout from "./pages/dashboard/DashboardLayout";
+import Home from "./pages/home/Home";
 
 const routes = [
   {
