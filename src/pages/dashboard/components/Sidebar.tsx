@@ -20,7 +20,7 @@ import { Button } from "../../core/components/design-system/ui/button";
 import Logo from "../../core/components/design-system/Logo";
 import { useEffect, useState } from "react";
 import IUser from "@/types/IUser";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import * as Progress from "@radix-ui/react-progress";
 import { useGetUser } from "@/queries/useFetchUser";
 import { Separator } from "@/pages/core/components/design-system/ui/separator";
@@ -28,6 +28,8 @@ import { Separator } from "@/pages/core/components/design-system/ui/separator";
 const SidebarDashboard = () => {
   const [session, setSession] = useState<IUser>();
   const sessions = sessionStorage.getItem("user");
+
+  const location = useLocation();
 
   useEffect(() => {
     if (!sessions) {
@@ -45,7 +47,7 @@ const SidebarDashboard = () => {
     },
     {
       title: "Starred",
-      url: "/starred",
+      url: "/dashboard/starred",
       icon: <Star />,
     },
   ];
@@ -65,10 +67,21 @@ const SidebarDashboard = () => {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
+                  {/* <SidebarMenuButton
                     asChild
                     className="text-heading-6 !text-gray-500 !font-semibold"
                     isActive={window.location.pathname === item.url}
+                  >
+                    <Link to={item.url}>
+                      {item.icon}
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton> */}
+
+                  <SidebarMenuButton
+                    asChild
+                    className="text-heading-6 !text-gray-500 !font-semibold"
+                    isActive={location.pathname === item.url}
                   >
                     <Link to={item.url}>
                       {item.icon}
@@ -87,7 +100,11 @@ const SidebarDashboard = () => {
             <div className="space-y-4 p-6 bg-white shadow-sm rounded-lg text-sm">
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Usage</p>
-                <Button variant="outline" size="sm" className="flex items-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center"
+                >
                   <HardDrive size={20} />
                   <p className="font-thin text-sm">Upgrade</p>
                 </Button>
