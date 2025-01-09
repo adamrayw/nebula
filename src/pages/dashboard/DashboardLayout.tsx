@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import SidebarDashboard from "./components/SideBar";
+import SidebarDashboard from "./components/Sidebar";
 import {
   SidebarProvider,
   SidebarTrigger,
@@ -14,7 +14,7 @@ const DashboardLayout = () => {
         <SidebarDashboard />
         <main className="w-full">
           <SidebarTrigger />
-            <Outlet />
+          <Outlet />
         </main>
       </SidebarProvider>
     </div>
