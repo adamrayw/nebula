@@ -3,6 +3,7 @@ import SignUpForm from "./pages/auth/components/SignUpForm";
 import Dashboard from "./pages/dashboard/Dashboard";
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import Home from "./pages/home/Home";
+import Starred from "./pages/dashboard/components/starred/Starred";
 
 const routes = [
   {
@@ -24,9 +25,13 @@ const routes = [
       {
         path: "",
         element: <Dashboard />,
-      }
-    ]
-  }
+      },
+      {
+        path: "starred",
+        element: <Starred />,
+      },
+    ],
+  },
 ];
 
 export default routes;
