@@ -32,8 +32,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/pages/core/components/design-system/ui/pagination";
-import { useFetchFile } from "@/queries/useFetchFiles";
 import { IFile } from "@/types/IFile";
+import { useStarredFetchFile } from "@/queries/useFetchStarredFiles";
 
 const Starred = () => {
   const [search, setSearch] = useState<string>("");
@@ -41,7 +41,10 @@ const Starred = () => {
   const [page, setPage] = useState<number>(1);
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, refetch } = useFetchFile(search, offset);
+  const { data, isLoading, isError, refetch } = useStarredFetchFile(
+    search,
+    offset
+  );
 
   useEffect(() => {
     if (isError) {
