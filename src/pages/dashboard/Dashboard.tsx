@@ -94,7 +94,8 @@ const Dashboard = () => {
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries()]);
-      toast.success("File added to Starred", {
+      toast("File added to Starred", {
+        icon: "⭐️",
         position: "bottom-center",
         duration: 3000,
       });
@@ -110,7 +111,8 @@ const Dashboard = () => {
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries()]);
-      toast.success("File removed from Starred", {
+      toast("File removed from Starred", {
+        icon: "🗑️",
         position: "bottom-center",
         duration: 3000,
       });
