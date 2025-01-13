@@ -93,6 +93,19 @@ const Starred = () => {
     },
   });
 
+  useEffect(() => {
+    if(data?.data.length === 0) {
+      if(data?.data?.length > 10) {
+        setOffset(offset - 10);
+        setPage(page - 1);
+      } else  {
+        setOffset(0);
+        setPage(1);
+      }
+
+    }
+  }, [handleRemoveStarred]);
+
   const handlePrevious = () => {
     if (offset <= 0) return;
     setOffset(offset - 10);
@@ -181,7 +194,9 @@ const Starred = () => {
         </Table>
         {isLoading && <p>Loading...</p>}
         {data?.data?.length === 0 && (
-          <p className="text-center my-4 text-sm">No files uploaded yet.</p>
+          <p className="text-center my-4 text-sm">
+            No starred files found.{" "}
+          </p>
         )}
       </div>
 
@@ -224,7 +239,7 @@ const Starred = () => {
                 </PaginationLink>
               </PaginationItem>
             )}
-            {(data?.lastPage ?? 0) > 3 && (
+            {(data?.lastPage ?? 0) > 2 && (
               <>
                 <PaginationItem>
                   <PaginationEllipsis />
