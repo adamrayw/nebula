@@ -109,11 +109,6 @@ const Starred = () => {
     <div className="px-10">
       <SearchBtn setSearch={setSearch} refetch={refetch} />
       <div className="mt-10">
-        <small className="border text-black rounded-full p-2 ">
-          ℹ️ Starred file masih progress pengerjaan
-        </small>
-      </div>
-      <div className="mt-10">
         <Table>
           <TableHeader>
             <TableRow>
