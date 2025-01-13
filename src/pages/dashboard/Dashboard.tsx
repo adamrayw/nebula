@@ -311,7 +311,7 @@ const Dashboard = () => {
                     </PaginationLink>
                   </PaginationItem>
                 )}
-                {(data?.lastPage ?? 0) > 3 && (
+                {(data?.lastPage ?? 0) > 2 && (
                   <>
                     <PaginationItem>
                       <PaginationEllipsis />
