@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 interface Starred {
     id: string;
     userId: string;
@@ -6,6 +8,7 @@ interface Starred {
     updatedAt: string;
 }
 export interface IFile {
+    length: ReactNode;
     id: string;
     name?: string;
     size?: number;
