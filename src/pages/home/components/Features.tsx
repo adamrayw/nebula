@@ -8,15 +8,15 @@ const features = [
     icon: Cloud,
   },
   {
-    name: "Advanced Security",
+    name: "Security & Encryption",
     description:
-      "Enterprise-grade encryption and security measures to keep your files safe.",
+      "Keep your files safe with end-to-end encryption and secure file sharing.",
     icon: ShieldCloseIcon,
   },
   {
     name: "Activity History",
     description:
-      "Monitor file activities and changes with detailed audit logs and timestamps.",
+      "Track your file activity and history with our detailed logs.",
     icon: Clock10,
   },
 ];

@@ -75,9 +75,9 @@ const Footer = () => {
           <div className="space-y-8">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 brand">
-                <span className="text-white font-bold">NB</span>
+                <span className="text-white font-bold">N</span>
               </div>
-              <span className="text-lg font-semibold text-white">NebuloBox</span>
+              <span className="text-lg font-semibold text-white">Nebula</span>
             </div>
             <p className="text-sm leading-6 text-gray-300">
               Making cloud storage secure and easy to use for everyone.
