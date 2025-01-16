@@ -13,11 +13,10 @@ const Hero = () => {
               </span>
             </div>
             <h1 className="text-heading-1">
-              The best cloud storage for your files.
+              Secure cloud storage for your files.
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Keep your files safe and access them from any device, anywhere you
-              go. Share files your way, with anyone you want.
+              Making cloud storage secure and easy to use for everyone.
             </p>
             <div className="mt-10 flex items-center gap-x-6">
               <Button className="btn-primary" asChild>
