@@ -6,9 +6,8 @@ import {
   FaFilePowerpoint,
   FaFileImage,
   FaFileVideo,
-  FaFileArchive,
-  FaFileAlt,
   FaFile,
+  FaFileAudio,
 } from "react-icons/fa";
 
 interface FileIconProps {
@@ -39,11 +38,11 @@ const FileIcon: React.FC<FileIconProps> = ({
     jpeg: <FaFileImage size={size} color="#6f42c1" />,
     png: <FaFileImage size={size} color="#6f42c1" />,
     gif: <FaFileImage size={size} color="#6f42c1" />,
+    svg: <FaFileImage size={size} color="#6f42c1" />,
+    webp: <FaFileImage size={size} color="#6f42c1" />,
     mp4: <FaFileVideo size={size} color="#ffc107" />,
     mov: <FaFileVideo size={size} color="#ffc107" />,
-    zip: <FaFileArchive size={size} color="#7952b3" />,
-    rar: <FaFileArchive size={size} color="#7952b3" />,
-    txt: <FaFileAlt size={size} color="#343a40" />,
+    mp3: <FaFileAudio size={size} color="#17a2b8" />,
   };
 
   // Return the matched icon or a default file icon
