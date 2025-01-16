@@ -3,11 +3,12 @@ import { ICategory } from "@/types/ICategory";
 import { IFile } from "@/types/IFile";
 import { useQuery } from "@tanstack/react-query";
 
-export function useFetchFile(search: string, offset: number) {
+export function useFetchFile(search: string, offset: number, sortBy: string, sortOrder: string) {
+
     return useQuery({
         queryKey: ["files"],
         queryFn: async () => {
-            const response = await get(`/file/getFiles?s=${search}&offset=${offset}`) as { data: IFile[], totalFile: number, lastPage?: number };
+            const response = await get(`/file/getFiles?s=${search}&offset=${offset}&sortBy=${sortBy}&sortOrder=${sortOrder}`) as { data: IFile[], totalFile: number, lastPage?: number };
             if (!response || typeof response !== "object" || !("data" in response)) {
                 throw new Error("Invalid response");
             }
