@@ -1,9 +1,9 @@
 import { get } from "@/api/file";
+import { ICategory } from "@/types/ICategory";
 import { IFile } from "@/types/IFile";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFetchFile(search: string, offset: number) {
-
     return useQuery({
         queryKey: ["files"],
         queryFn: async () => {
@@ -18,5 +18,17 @@ export function useFetchFile(search: string, offset: number) {
             };
         },
     });
+}
 
+export function useFetchCategories() {
+    return useQuery({
+        queryKey: ['category'],
+        queryFn: async () => {
+            const response = await get("/file/categories") as { data: ICategory }
+
+            return {
+                data: response.data
+            }
+        }
+    })
 }

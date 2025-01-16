@@ -67,10 +67,6 @@ const Starred = () => {
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries()]);
-      toast.success("File added to Starred", {
-        position: "bottom-center",
-        duration: 3000,
-      });
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
@@ -83,10 +79,6 @@ const Starred = () => {
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries()]);
-      toast.success("File removed from Starred", {
-        position: "bottom-center",
-        duration: 3000,
-      });
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
