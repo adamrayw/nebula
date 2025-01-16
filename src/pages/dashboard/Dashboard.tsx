@@ -47,16 +47,23 @@ import {
 import { deleteFile } from "@/api/file";
 import { post, remove } from "@/api/starred";
 import { AxiosError } from "axios";
-import { FaStar } from "react-icons/fa";
+import { FaArrowDown, FaArrowUp, FaStar } from "react-icons/fa";
 import CategoriesIndicator from "./components/CategoriesIndicator";
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
   const [offset, setOffset] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const [sortBy, setSortBy] = useState<string>("createdAt");
+  const [sortOrder, setSortOrder] = useState<string>("DESC");
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, refetch } = useFetchFile(search, offset);
+  const { data, isLoading, isError, refetch } = useFetchFile(
+    search,
+    offset,
+    sortBy,
+    sortOrder
+  );
 
   useEffect(() => {
     if (isError) {
@@ -66,7 +73,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     refetch();
-  }, [refetch, offset]);
+  }, [refetch, offset, sortBy, sortOrder]);
 
   useEffect(() => {
     setOffset(0);
@@ -125,6 +132,15 @@ const Dashboard = () => {
     setPage(page + 1);
   };
 
+  const handleSort = (column: string) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
+    } else {
+      setSortBy(column);
+      setSortOrder("ASC");
+    }
+  };
+
   return (
     <div className="grid grid-cols-4 relative">
       <div className="col-span-3 border-r h-screen px-10">
@@ -147,9 +163,48 @@ const Dashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>File size</TableHead>
-                    <TableHead>Uploaded on</TableHead>
+                    <TableHead onClick={() => handleSort("originalName")}  className="hover:cursor-pointer">
+                      <div className="flex items-center">
+                        Name
+                        {sortBy === "originalName" && (
+                          <span className="text-gray-400 ml-2">
+                            {sortOrder === "ASC" ? (
+                              <FaArrowUp />
+                            ) : (
+                              <FaArrowDown />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead onClick={() => handleSort("size")} className="hover:cursor-pointer">
+                      <div className="flex items-center">
+                        Size
+                        {sortBy === "size" && (
+                          <span className="text-gray-400 ml-2">
+                            {sortOrder === "ASC" ? (
+                              <FaArrowUp />
+                            ) : (
+                              <FaArrowDown />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
+                    <TableHead onClick={() => handleSort("createdAt")} className="hover:cursor-pointer">
+                      <div className="flex items-center">
+                        Uploaded on
+                        {sortBy === "createdAt" && (
+                          <span className="text-gray-400 ml-2">
+                            {sortOrder === "ASC" ? (
+                              <FaArrowUp />
+                            ) : (
+                              <FaArrowDown />
+                            )}
+                          </span>
+                        )}
+                      </div>
+                    </TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
