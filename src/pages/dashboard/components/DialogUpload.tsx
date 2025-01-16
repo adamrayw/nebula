@@ -60,6 +60,7 @@ const DialogUpload = () => {
 
   const onSubmit = async () => {
     const data = new FormData();
+
     const allowedExtensions = new Set([
       "pdf",
       "doc",
@@ -68,10 +69,31 @@ const DialogUpload = () => {
       "pptx",
       "xls",
       "xlsx",
+      "mp3",
+      "mp4",
+      "png",
+      "jpg",
+      "jpeg",
+      "gif",
+      "svg",
+      "webp",
     ]);
 
     if (files) {
       const fileType = await fileTypeFromBlob(files);
+      
+      let category = "";
+      if (fileType && ["mp3"].includes(fileType.ext)) {
+        category = "audio";
+      } else if (fileType && ["png", "jpg", "jpeg", "gif", "svg", "webp"].includes(fileType.ext)) {
+        category = "image";
+      } else if (fileType && ["mp4"].includes(fileType.ext)) {
+        category = "video";
+      } else if (fileType && ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(fileType.ext)) {
+        category = "document";
+      }
+
+      data.append("category", category);
 
       if (!fileType || !allowedExtensions.has(fileType.ext)) {
         toast("Please upload a valid file type", {
@@ -109,6 +131,7 @@ const DialogUpload = () => {
 
     data.append("userId", userId);
     data.append("originalSize", (files?.size ?? 0).toString());
+    data.append("format", fileType);
 
     mutation.mutate(data);
   };
@@ -146,7 +169,7 @@ const DialogUpload = () => {
         <DialogHeader>
           <DialogTitle>Upload File</DialogTitle>
           <DialogDescription>
-            Upload your files to the main library.
+            Upload your files here to store them in the cloud.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -160,17 +183,20 @@ const DialogUpload = () => {
                       Browse your files or drag and drop here
                     </span>
                     <span className="text-xs text-gray-300">
-                      (PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX)
+                      Max file size: 10MB
                     </span>
                   </div>
                   <Input
                     className="hidden"
                     type="file"
                     id="file"
-                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.mp3,.mp4,.png,.jpg,.jpeg,.gif,.svg,.webp"
                     {...register("file", { required: true })}
                   />
                 </div>
+                <p className="text-xs text-gray-300 font-normal mt-2 text-center">
+                  pdf, doc, docx, ppt, pptx, xls, xlsx, mp3, mp4, png, jpg, jpeg, gif, svg, webp 
+                </p>
               </Label>
             )}
             {files && (
