@@ -21,3 +21,9 @@ export interface IFile {
     updatedAt?: string;
     starred: Starred
 }
+
+export interface FileIconProps {
+  url: string;
+  size?: number;
+  color?: string;
+}
