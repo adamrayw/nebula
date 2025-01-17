@@ -163,7 +163,10 @@ const Dashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead onClick={() => handleSort("originalName")}  className="hover:cursor-pointer">
+                    <TableHead
+                      onClick={() => handleSort("originalName")}
+                      className="hover:cursor-pointer"
+                    >
                       <div className="flex items-center">
                         Name
                         {sortBy === "originalName" && (
@@ -177,7 +180,10 @@ const Dashboard = () => {
                         )}
                       </div>
                     </TableHead>
-                    <TableHead onClick={() => handleSort("size")} className="hover:cursor-pointer">
+                    <TableHead
+                      onClick={() => handleSort("size")}
+                      className="hover:cursor-pointer"
+                    >
                       <div className="flex items-center">
                         Size
                         {sortBy === "size" && (
@@ -191,7 +197,10 @@ const Dashboard = () => {
                         )}
                       </div>
                     </TableHead>
-                    <TableHead onClick={() => handleSort("createdAt")} className="hover:cursor-pointer">
+                    <TableHead
+                      onClick={() => handleSort("createdAt")}
+                      className="hover:cursor-pointer"
+                    >
                       <div className="flex items-center">
                         Uploaded on
                         {sortBy === "createdAt" && (
@@ -216,7 +225,9 @@ const Dashboard = () => {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <div className="flex items-center space-x-2">
-                                <FileIcon url={file.originalName || ""} />
+                                <TableCell>
+                                  <FileIcon url={file.originalName || ""} />
+                                </TableCell>
                                 <p className="truncate max-w-64">
                                   {file.originalName}
                                 </p>
