@@ -28,11 +28,13 @@ const DialogUpload = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [fileType, setFileType] = useState<string>("");
   const queryClient = useQueryClient();
-  const loggedUser = useGetUser() as { data: { totalFileSize: number; limit: number } };
+  const loggedUser = useGetUser() as {
+    data: { totalFileSize: number; limit: number };
+  };
 
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
-      uploadFile('/file/uploadFile', {
+      uploadFile("/file/uploadFile", {
         data,
         onUploadProgress: (progressEvent) => {
           const percentComplete = Math.round(
@@ -81,15 +83,23 @@ const DialogUpload = () => {
 
     if (files) {
       const fileType = await fileTypeFromBlob(files);
-      
+
       let category = "";
       if (fileType && ["mp3"].includes(fileType.ext)) {
         category = "audio";
-      } else if (fileType && ["png", "jpg", "jpeg", "gif", "svg", "webp"].includes(fileType.ext)) {
+      } else if (
+        fileType &&
+        ["png", "jpg", "jpeg", "gif", "svg", "webp"].includes(fileType.ext)
+      ) {
         category = "image";
       } else if (fileType && ["mp4"].includes(fileType.ext)) {
         category = "video";
-      } else if (fileType && ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(fileType.ext)) {
+      } else if (
+        fileType &&
+        ["pdf", "doc", "docx", "ppt", "pptx", "xls", "xlsx"].includes(
+          fileType.ext
+        )
+      ) {
         category = "document";
       }
 
@@ -116,7 +126,7 @@ const DialogUpload = () => {
 
       if (checkForLimit > loggedUser.data?.limit) {
         toast("Storage is not enough, upgrade to get more storage", {
-          icon: "🗄️"
+          icon: "🗄️",
         });
         return;
       }
@@ -165,7 +175,8 @@ const DialogUpload = () => {
           Upload File
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[425px] w-[300px] sm:w-[400px] md:w-auto lg:w-auto rounded-lg bg-white p-8 dark:bg-gray-950 max-h-[80vh] overflow-auto mx-auto sm:mx-auto md:mx-8 lg:mx-10">
+        {/* <DialogContent className="sm:max-w-[425px]"> */}
         <DialogHeader>
           <DialogTitle>Upload File</DialogTitle>
           <DialogDescription>
@@ -195,7 +206,8 @@ const DialogUpload = () => {
                   />
                 </div>
                 <p className="text-xs text-gray-300 font-normal mt-2 text-center">
-                  pdf, doc, docx, ppt, pptx, xls, xlsx, mp3, mp4, png, jpg, jpeg, gif, svg, webp 
+                  pdf, doc, docx, ppt, pptx, xls, xlsx, mp3, mp4, png, jpg,
+                  jpeg, gif, svg, webp
                 </p>
               </Label>
             )}

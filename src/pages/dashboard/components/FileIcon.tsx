@@ -9,16 +9,11 @@ import {
   FaFile,
   FaFileAudio,
 } from "react-icons/fa";
-
-interface FileIconProps {
-  url: string;
-  size?: number;
-  color?: string;
-}
+import { FileIconProps } from "@/types/IFile";
 
 const FileIcon: React.FC<FileIconProps> = ({
   url,
-  size = 16,
+  size = 24,
   color = "#000",
 }) => {
   // Normalize the extension to lowercase for comparison
