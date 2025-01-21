@@ -1,4 +1,3 @@
-import fileService from "@/pages/core/lib/axiosInstance";
 import axios from "axios";
 
 const instance = axios.create({
@@ -17,7 +16,7 @@ instance.interceptors.request.use((config) => {
 
 export const get = async <T>(url: string): Promise<T> => {
     try {
-        const response = await fileService.get(`${url}`)
+        const response = await instance.get(`${url}`)
 
         return response.data as T;
     } catch (error) {
