@@ -19,12 +19,12 @@ const CTA = () => {
             <Button className="btn-white" asChild>
               <Link to="/signup">Sign up</Link>
             </Button>
-            <Link
-              to="/pricing"
+            <a
+              href="/#pricing"
               className="text-sm font-semibold leading-6 text-white"
             >
               View pricing <span aria-hidden="true">→</span>
-            </Link>
+            </a>
           </div>
         </div>
       </div>
