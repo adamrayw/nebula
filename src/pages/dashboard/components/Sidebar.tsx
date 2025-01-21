@@ -9,7 +9,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../../core/components/design-system/ui/sidebar";
-import { ChevronUp, Files, HardDrive, LogOut, Star } from "lucide-react";
+import {
+  ChevronUp,
+  CreditCard,
+  Files,
+  HardDrive,
+  LogOut,
+  Star,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -104,9 +111,12 @@ const SidebarDashboard = () => {
                   variant="outline"
                   size="sm"
                   className="flex items-center"
+                  asChild
                 >
-                  <HardDrive size={20} />
-                  <p className="font-thin text-sm">Upgrade</p>
+                  <a href="/#pricing">
+                    <HardDrive size={20} />
+                    <p className="font-thin text-sm">Upgrade</p>
+                  </a>
                 </Button>
                 {/* <div className="upgrade flex items-center space-x-1 bg-gray-100 p-1 rounded-lg shadow-sm hover:cursor-pointer ">
                 </div> */}
@@ -127,7 +137,7 @@ const SidebarDashboard = () => {
               </Progress.Root>
               <p>
                 {((data?.totalFileSize ?? 0) / 1024 / 1024).toFixed(2)} MB of{" "}
-                {(52428800 / 1024 / 1024).toFixed(2)} MB
+                {((data?.limit ?? 1) / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
           </SidebarMenuItem>
@@ -156,6 +166,18 @@ const SidebarDashboard = () => {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
+                <DropdownMenuItem asChild>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    type="submit"
+                    className="w-full flex justify-start"
+                  >
+                    <Link to="/dashboard/payment-history">
+                      <CreditCard /> Payment History
+                    </Link>
+                  </Button>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Button
                     variant="ghost"
