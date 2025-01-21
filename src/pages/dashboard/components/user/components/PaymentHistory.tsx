@@ -15,8 +15,6 @@ import moment from "moment";
 const PaymentHistory = () => {
   const { data, isLoading } = useFetchPayment();
 
-  console.log(data);
-
   return (
     <div className="px-10">
       <h1 className="text-2xl font-semibold mb-5">Payment History</h1>
@@ -76,7 +74,7 @@ const PaymentHistory = () => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        {moment(payment.createdAt).format("LL")}
+                        {moment(payment.createdAt).format("LLL")}
                       </TableCell>
                     </TableRow>
                   ))}

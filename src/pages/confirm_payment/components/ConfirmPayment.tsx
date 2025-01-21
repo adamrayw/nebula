@@ -133,7 +133,7 @@ const ConfirmPayment = () => {
                     </Link>
                   </Button>
                   <Link
-                    to="/dashboard"
+                    to="/dashboard/payment-history"
                     className="text-blue-600 text-sm text-center"
                   >
                     Go to Payment History
