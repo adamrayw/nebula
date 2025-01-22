@@ -90,11 +90,7 @@ const Starred = () => {
       if(data?.data?.length > 10) {
         setOffset(offset - 10);
         setPage(page - 1);
-      } else  {
-        setOffset(0);
-        setPage(1);
       }
-
     }
   }, [handleRemoveStarred]);
 
