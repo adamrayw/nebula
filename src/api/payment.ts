@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_STARRED_SERVICE_URL,
+    baseURL: import.meta.env.VITE_PAYMENT_SERVICE_URL,
 });
 
 instance.interceptors.request.use((config) => {
