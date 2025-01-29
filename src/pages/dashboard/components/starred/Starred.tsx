@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import {
   Table,
@@ -20,7 +19,7 @@ import moment from "moment";
 import FileIcon from "../FileIcon";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import { post, remove } from "@/api/starred";
+import { remove } from "@/api/starred";
 import { formatFileSize } from "../../utils/formatFileSize";
 import SearchBtn from "../../components/SearchBtn";
 import {
@@ -46,6 +45,11 @@ const Starred = () => {
     offset
   );
 
+  const isFirstRender = useRef({
+    effect1: true,
+    effect2: true,
+  });
+
   useEffect(() => {
     if (isError) {
       toast.error("Failed to fetch files");
@@ -53,32 +57,30 @@ const Starred = () => {
   }, [isError]);
 
   useEffect(() => {
+    if (isFirstRender.current.effect1) {
+      isFirstRender.current.effect1 = false;
+      return;
+    }
     refetch();
   }, [refetch, offset]);
 
   useEffect(() => {
+    if (isFirstRender.current.effect2) {
+      isFirstRender.current.effect2 = false;
+      return;
+    }
     setOffset(0);
     refetch();
   }, [search]);
-
-  const handleStarred = useMutation({
-    mutationFn: async (fileId: string) => {
-      return await post(`/file/starred/${fileId}`);
-    },
-    onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
-    },
-    onError: (error: AxiosError) => {
-      toast.error(error.message);
-    },
-  });
 
   const handleRemoveStarred = useMutation({
     mutationFn: async (fileId: string) => {
       return await remove(`/file/starred/${fileId}`);
     },
     onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
+      Promise.all([queryClient.invalidateQueries({
+        queryKey: ["starredFiles"],
+      })]);
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
@@ -86,8 +88,8 @@ const Starred = () => {
   });
 
   useEffect(() => {
-    if(data?.data.length === 0) {
-      if(data?.data?.length > 10) {
+    if (data?.data.length === 0) {
+      if (data?.data?.length > 10) {
         setOffset(offset - 10);
         setPage(page - 1);
       }
@@ -143,7 +145,7 @@ const Starred = () => {
                 <TableCell>{moment(file.createdAt).format("LL")}</TableCell>
                 <TableCell>
                   <div className="flex items-center">
-                    {file.starred !== null ? (
+                    {file.starred !== null && (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -159,20 +161,6 @@ const Starred = () => {
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                    ) : (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Star
-                              className="size-4 hover:cursor-pointer"
-                              onClick={() => handleStarred.mutate(file.id)}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Add to Starred</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
                     )}
                   </div>
                 </TableCell>
@@ -182,9 +170,7 @@ const Starred = () => {
         </Table>
         {isLoading && <p>Loading...</p>}
         {data?.data?.length === 0 && (
-          <p className="text-center my-4 text-sm">
-            No starred files found.{" "}
-          </p>
+          <p className="text-center my-4 text-sm">No starred files found. </p>
         )}
       </div>
 
