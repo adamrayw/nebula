@@ -1,9 +1,9 @@
-import fileService from "@/pages/core/lib/axiosInstance";
+import client from "@/pages/core/lib/axiosInstance";
 import axios, { AxiosProgressEvent } from "axios";
 
 export const get = async <T>(url: string): Promise<T> => {
     try {
-        const response = await fileService.get(`${url}`)
+        const response = await client.get(`${url}`)
 
         return response.data as T;
     } catch (error) {
@@ -16,7 +16,7 @@ export const get = async <T>(url: string): Promise<T> => {
 
 export const post = async <T>(url: string, data: unknown): Promise<T> => {
     try {
-        const response = await fileService.post(`${url}`, data)
+        const response = await client.post(`${url}`, data)
 
         return response.data;
     } catch (error) {
@@ -29,10 +29,11 @@ export const post = async <T>(url: string, data: unknown): Promise<T> => {
 
 export const deleteFile = async <T>(url: string, fileId: string): Promise<T> => {
     try {
-        const response = await fileService.delete(`${url}${fileId}`)
+        const response = await client.delete(`${url}${fileId}`)
 
         return response.data;
     } catch (error) {
+        console.log("Failed to delete starred-service : ")
         if (error instanceof Error) {
             throw new Error(error.message)
         }
@@ -44,8 +45,8 @@ export const uploadFile = async <T>(url: string, { data, onUploadProgress }: { d
 
     try {
         const token = sessionStorage.getItem('token')
-        const fileServiceUrl = import.meta.env.VITE_FILE_SERVICE_URL
-        const response = await axios.post(`${fileServiceUrl}${url}`, data, {
+        const clientUrl = import.meta.env.VITE_FILE_SERVICE_URL
+        const response = await axios.post(`${clientUrl}${url}`, data, {
             headers: {
                 'Authorization': `Bearer ${token}`
             },
