@@ -128,7 +128,7 @@ const ConfirmPayment = () => {
                     asChild
                     className="w-full bg-blue-600 hover:bg-blue-700"
                   >
-                    <Link to={mutation.data?.data.midtrans.redirect_url}>
+                    <Link to={mutation.data?.data?.midtrans?.redirect_url}>
                       Pay Now
                     </Link>
                   </Button>

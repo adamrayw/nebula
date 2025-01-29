@@ -32,7 +32,7 @@ import {
   PopoverTrigger,
 } from "../core/components/design-system/ui/popover";
 import { Button } from "../core/components/design-system/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useFetchFile } from "@/queries/useFetchFiles";
 import {
@@ -58,6 +58,11 @@ const Dashboard = () => {
   const [sortOrder, setSortOrder] = useState<string>("DESC");
   const queryClient = useQueryClient();
 
+  const isFirstRender = useRef({
+    effect1: true,
+    effect2: true,
+  });
+
   const { data, isLoading, isError, refetch } = useFetchFile(
     search,
     offset,
@@ -72,10 +77,18 @@ const Dashboard = () => {
   }, [isError]);
 
   useEffect(() => {
+    if (isFirstRender.current.effect1) {
+      isFirstRender.current.effect1 = false;
+      return;
+    }
     refetch();
-  }, [refetch, offset, sortBy, sortOrder]);
+  }, [offset, sortBy, sortOrder]);
 
   useEffect(() => {
+    if (isFirstRender.current.effect2) {
+      isFirstRender.current.effect2 = false;
+      return;
+    }
     setOffset(0);
     refetch();
   }, [search]);
@@ -101,7 +114,11 @@ const Dashboard = () => {
       return await post(`/file/starred/${fileId}`);
     },
     onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["files"],
+        }),
+      ]);
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
@@ -113,7 +130,11 @@ const Dashboard = () => {
       return await remove(`/file/starred/${fileId}`);
     },
     onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["files"],
+        }),
+      ]);
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
