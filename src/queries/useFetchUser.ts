@@ -1,11 +1,13 @@
-import { fetchUser } from "@/api/user";
+import { apiRequest } from "@/api/apiService";
 import { useQuery } from "@tanstack/react-query";
 
 export function useGetUser() {
+    const userUrl = import.meta.env.VITE_USER_SERVICE_URL;
+
     return useQuery({
         queryKey: ["getLimit"],
         queryFn: async () => {
-            const response = await fetchUser("/user/getUserInfo");
+            const response = await apiRequest("get", userUrl, "/user/getUserInfo");
             if (!response || typeof response !== "object" || !("data" in response)) {
                 throw new Error("Invalid response");
             }
