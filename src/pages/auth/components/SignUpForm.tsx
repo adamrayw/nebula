@@ -15,7 +15,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { auth } from "@/api/user";
+import { auth } from "@/api/auth";
 import AlertError from "./AlertError";
 
 const SignUpForm = () => {

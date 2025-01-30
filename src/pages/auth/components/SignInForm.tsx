@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { ISignIn } from "@/types/inputSignin";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { auth } from "@/api/user";
+import { auth } from "@/api/auth";
 import AlertError from "./AlertError";
 
 const SignInForm = () => {
