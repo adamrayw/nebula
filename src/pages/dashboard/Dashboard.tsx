@@ -44,11 +44,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../core/components/design-system/ui/pagination";
-import { deleteFile } from "@/api/file";
-import { post, remove } from "@/api/starred";
 import { AxiosError } from "axios";
 import { FaArrowDown, FaArrowUp, FaStar } from "react-icons/fa";
 import CategoriesIndicator from "./components/CategoriesIndicator";
+import { apiRequest } from "@/api/apiService";
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
@@ -57,6 +56,8 @@ const Dashboard = () => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [sortOrder, setSortOrder] = useState<string>("DESC");
   const queryClient = useQueryClient();
+  const fileServiceUrl = import.meta.env.VITE_FILE_SERVICE_URL;
+  const starredServiceUrl = import.meta.env.VITE_STARRED_SERVICE_URL;
 
   const isFirstRender = useRef({
     effect1: true,
@@ -95,7 +96,7 @@ const Dashboard = () => {
 
   const deleteHandler = useMutation({
     mutationFn: async (fileId: string) => {
-      deleteFile("/file/deleteFile/", fileId);
+      apiRequest("delete", fileServiceUrl, "/file/deleteFile/" + fileId);
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries()]);
@@ -111,7 +112,7 @@ const Dashboard = () => {
 
   const handleStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await post(`/file/starred/${fileId}`);
+      return await apiRequest(`post`, starredServiceUrl, `/file/starred/${fileId}`);
     },
     onSuccess: () => {
       Promise.all([
@@ -127,7 +128,7 @@ const Dashboard = () => {
 
   const handleRemoveStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await remove(`/file/starred/${fileId}`);
+      return await apiRequest(`delete`, starredServiceUrl, `/file/starred/${fileId}`);
     },
     onSuccess: () => {
       Promise.all([
