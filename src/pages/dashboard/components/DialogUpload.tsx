@@ -19,7 +19,7 @@ import { Progress } from "@/pages/core/components/design-system/ui/progress";
 import { fileTypeFromBlob } from "file-type";
 import toast from "react-hot-toast";
 import { useGetUser } from "@/queries/useFetchUser";
-import { uploadFile } from "@/api/file";
+import { uploadFile } from "@/api/uploadFile";
 
 const DialogUpload = () => {
   const { register, handleSubmit, setValue, getValues, watch } =
