@@ -19,10 +19,10 @@ export interface IPaymentResponse {
 }
 
 export interface midtrans {
-    midtrans: midtrans_data;
+    payment: midtrans_data;
 }
 
 export interface midtrans_data {
-    redirect_url: string;
+    paymentUrl: string;
     token: string; 
 }
