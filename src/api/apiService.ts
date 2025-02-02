@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 const createApi = (baseURL: string) => {
     const instance = axios.create({ baseURL });
@@ -20,7 +20,7 @@ export const apiRequest = async <T>(
     method: 'get' | 'post' | 'delete',
     serviceUrl: string,
     url: string,
-    data?: unknown
+    data?: T & AxiosRequestConfig<T>
 ): Promise<T> => {
     const api = createApi(serviceUrl);
     const response = await api[method](url, data);
