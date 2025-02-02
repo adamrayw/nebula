@@ -30,9 +30,11 @@ const ConfirmPayment = () => {
   }, []);
 
   const mutation = useMutation<IPaymentResponse, Error, ICreatePayment>({
-    mutationFn: (newData: ICreatePayment) =>
-      apiRequest("post", paymentServiceUrl, "/payments", newData),
-  });
+    mutationFn: async (newData: ICreatePayment) => {
+        const response = await apiRequest("post", paymentServiceUrl, "/payments", newData);
+        return response as IPaymentResponse;
+    },
+});
 
   if (mutation.isSuccess) {
     toast("Payment link created successfully!", {

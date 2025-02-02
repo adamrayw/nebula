@@ -14,7 +14,7 @@ export interface ICreatePayment {
     type: string;
 }
 
-export interface IPaymentResponse {
+export interface IPaymentResponse extends IPayment {
     data: midtrans
 }
 
