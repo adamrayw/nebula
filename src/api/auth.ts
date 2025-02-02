@@ -15,19 +15,6 @@ instance.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
-export const fetchUser = async <T>(url: string): Promise<T> => {
-    try {
-        const response = await instance.get(`${url}`)
-
-        return response.data;
-    } catch (error) {
-        if (error instanceof Error) {
-            throw new Error(error.message)
-        }
-        throw new Error('Failed to fetch data')
-    }
-}
-
 export const auth = async <T>(url: string, data: ISignIn): Promise<T> => {
     try {
         const response = await instance.post(`${url}`, data)

@@ -19,7 +19,6 @@ import moment from "moment";
 import FileIcon from "../FileIcon";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import { remove } from "@/api/starred";
 import { formatFileSize } from "../../utils/formatFileSize";
 import SearchBtn from "../../components/SearchBtn";
 import {
@@ -33,12 +32,14 @@ import {
 } from "@/pages/core/components/design-system/ui/pagination";
 import { IFile } from "@/types/IFile";
 import { useStarredFetchFile } from "@/queries/useFetchStarredFiles";
+import { apiRequest } from "@/api/apiService";
 
 const Starred = () => {
   const [search, setSearch] = useState<string>("");
   const [offset, setOffset] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const queryClient = useQueryClient();
+  const starredServiceUrl = import.meta.env.VITE_STARRED_SERVICE_URL;
 
   const { data, isLoading, isError, refetch } = useStarredFetchFile(
     search,
@@ -75,7 +76,7 @@ const Starred = () => {
 
   const handleRemoveStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await remove(`/file/starred/${fileId}`);
+      return await apiRequest(`delete`, starredServiceUrl, `/file/starred/${fileId}`);
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries({

@@ -2,7 +2,6 @@ import { ChevronLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "../../core/components/design-system/ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { post } from "@/api/payment";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../core/components/design-system/LoadingSpinner";
 import { ICreatePayment, IPaymentResponse } from "@/types/IPayment";
@@ -11,12 +10,14 @@ import {
   AlertDescription,
 } from "../../core/components/design-system/ui/alert";
 import { useEffect } from "react";
+import { apiRequest } from "@/api/apiService";
 
 const ConfirmPayment = () => {
   const data = JSON.parse(sessionStorage.getItem("selectedPlan") || "{}");
   const userId = JSON.parse(sessionStorage.getItem("user") || "{}").id;
   const sessions = sessionStorage.getItem("user");
   const location = useNavigate();
+  const paymentServiceUrl = import.meta.env.VITE_PAYMENT_SERVICE_URL;
 
   useEffect(() => {
     if (!sessions) {
@@ -29,7 +30,8 @@ const ConfirmPayment = () => {
   }, []);
 
   const mutation = useMutation<IPaymentResponse, Error, ICreatePayment>({
-    mutationFn: (newData: ICreatePayment) => post("/payments", newData),
+    mutationFn: (newData: ICreatePayment) =>
+      apiRequest("post", paymentServiceUrl, "/payments", newData),
   });
 
   if (mutation.isSuccess) {
@@ -52,8 +54,6 @@ const ConfirmPayment = () => {
 
     mutation.mutate(item);
   };
-
-  console.log(mutation);
 
   return (
     <section className="space-y-20">
@@ -128,7 +128,7 @@ const ConfirmPayment = () => {
                     asChild
                     className="w-full bg-blue-600 hover:bg-blue-700"
                   >
-                    <Link to={mutation.data?.data?.midtrans?.redirect_url}>
+                    <Link to={mutation.data?.data?.payment?.paymentUrl}>
                       Pay Now
                     </Link>
                   </Button>

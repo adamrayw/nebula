@@ -44,11 +44,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../core/components/design-system/ui/pagination";
-import { deleteFile } from "@/api/file";
-import { post, remove } from "@/api/starred";
 import { AxiosError } from "axios";
 import { FaArrowDown, FaArrowUp, FaStar } from "react-icons/fa";
 import CategoriesIndicator from "./components/CategoriesIndicator";
+import { apiRequest } from "@/api/apiService";
+import Notification from "../core/components/Notification";
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
@@ -57,6 +57,8 @@ const Dashboard = () => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [sortOrder, setSortOrder] = useState<string>("DESC");
   const queryClient = useQueryClient();
+  const fileServiceUrl = import.meta.env.VITE_FILE_SERVICE_URL;
+  const starredServiceUrl = import.meta.env.VITE_STARRED_SERVICE_URL;
 
   const isFirstRender = useRef({
     effect1: true,
@@ -95,7 +97,11 @@ const Dashboard = () => {
 
   const deleteHandler = useMutation({
     mutationFn: async (fileId: string) => {
-      deleteFile("/file/deleteFile/", fileId);
+      return await apiRequest(
+        "delete",
+        fileServiceUrl,
+        "/file/deleteFile/" + fileId
+      );
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries()]);
@@ -104,14 +110,18 @@ const Dashboard = () => {
         duration: 3000,
       });
     },
-    onError: () => {
-      toast.error("File Failed to delete");
+    onError: (error: AxiosError) => {
+      toast.error("Failed to delete file, reason: " + error.message);
     },
   });
 
   const handleStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await post(`/file/starred/${fileId}`);
+      return await apiRequest(
+        `post`,
+        starredServiceUrl,
+        `/file/starred/${fileId}`
+      );
     },
     onSuccess: () => {
       Promise.all([
@@ -127,7 +137,11 @@ const Dashboard = () => {
 
   const handleRemoveStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await remove(`/file/starred/${fileId}`);
+      return await apiRequest(
+        `delete`,
+        starredServiceUrl,
+        `/file/starred/${fileId}`
+      );
     },
     onSuccess: () => {
       Promise.all([
@@ -165,7 +179,12 @@ const Dashboard = () => {
   return (
     <div className="grid grid-cols-4 relative">
       <div className="col-span-3 border-r h-screen px-10">
-        <SearchBtn setSearch={setSearch} refetch={refetch} />
+        <div className="flex items-center justify-between ">
+          <SearchBtn setSearch={setSearch} refetch={refetch} />
+          <div className="notif">
+            <Notification />
+          </div>
+        </div>
         <CategoriesIndicator />
         <div className="up-btn fixed right-0 bottom-0 p-4 z-40">
           {/* <h1 className="text-heading-3 !font-normal !text-gray-800 mb-4">
