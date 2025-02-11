@@ -34,7 +34,7 @@ import { Separator } from "@/pages/core/components/design-system/ui/separator";
 
 const SidebarDashboard = () => {
   const [session, setSession] = useState<IUser>();
-  const sessions = sessionStorage.getItem("user");
+  const sessions = localStorage.getItem("user");
 
   const location = useLocation();
 
@@ -185,8 +185,8 @@ const SidebarDashboard = () => {
                     className="w-full flex justify-start"
                     onClick={() => {
                       window.location.href = "/";
-                      sessionStorage.removeItem("user");
-                      sessionStorage.removeItem("token");
+                      localStorage.removeItem("user");
+                      localStorage.removeItem("token");
                     }}
                   >
                     <LogOut /> Sign out

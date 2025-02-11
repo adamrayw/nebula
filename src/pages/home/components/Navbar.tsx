@@ -13,7 +13,7 @@ import { Link } from "react-router";
 
 const Navbar = () => {
   const [session, setSession] = useState<IUser>();
-  const sessions = sessionStorage.getItem("user");
+  const sessions = localStorage.getItem("user");
 
   useEffect(() => {
     if (sessions) {
@@ -86,8 +86,8 @@ const Navbar = () => {
                       <p
                         onClick={() => {
                           window.location.href = "/";
-                          sessionStorage.removeItem("user");
-                          sessionStorage.removeItem("token");
+                          localStorage.removeItem("user");
+                          localStorage.removeItem("token");
                         }}
                       >
                         <LogOut /> Sign out

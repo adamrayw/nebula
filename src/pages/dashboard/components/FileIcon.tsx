@@ -13,7 +13,6 @@ import { FileIconProps } from "@/types/IFile";
 
 const FileIcon: React.FC<FileIconProps> = ({
   url,
-  size = 24,
   color = "#000",
 }) => {
   // Normalize the extension to lowercase for comparison
@@ -22,26 +21,26 @@ const FileIcon: React.FC<FileIconProps> = ({
 
   // Map file types to icons
   const iconMap: { [key: string]: JSX.Element } = {
-    pdf: <FaFilePdf size={size} color="#d9534f" />, // Red color for PDF
-    doc: <FaFileWord size={size} color="#007bff" />,
-    docx: <FaFileWord size={size} color="#007bff" />,
-    xls: <FaFileExcel size={size} color="#28a745" />,
-    xlsx: <FaFileExcel size={size} color="#28a745" />,
-    ppt: <FaFilePowerpoint size={size} color="#f0ad4e" />,
-    pptx: <FaFilePowerpoint size={size} color="#f0ad4e" />,
-    jpg: <FaFileImage size={size} color="#6f42c1" />,
-    jpeg: <FaFileImage size={size} color="#6f42c1" />,
-    png: <FaFileImage size={size} color="#6f42c1" />,
-    gif: <FaFileImage size={size} color="#6f42c1" />,
-    svg: <FaFileImage size={size} color="#6f42c1" />,
-    webp: <FaFileImage size={size} color="#6f42c1" />,
-    mp4: <FaFileVideo size={size} color="#ffc107" />,
-    mov: <FaFileVideo size={size} color="#ffc107" />,
-    mp3: <FaFileAudio size={size} color="#17a2b8" />,
+    pdf: <FaFilePdf className="h-6 w-6 text-gray-400" color="#d9534f" />, // Red color for PDF
+    doc: <FaFileWord className="h-6 w-6 text-gray-400" color="#007bff" />,
+    docx: <FaFileWord className="h-6 w-6 text-gray-400" color="#007bff" />,
+    xls: <FaFileExcel className="h-6 w-6 text-gray-400" color="#28a745" />,
+    xlsx: <FaFileExcel className="h-6 w-6 text-gray-400" color="#28a745" />,
+    ppt: <FaFilePowerpoint className="h-6 w-6 text-gray-400" color="#f0ad4e" />,
+    pptx: <FaFilePowerpoint className="h-6 w-6 text-gray-400" color="#f0ad4e" />,
+    jpg: <FaFileImage className="h-6 w-6 text-gray-400" color="#6f42c1" />,
+    jpeg: <FaFileImage className="h-6 w-6 text-gray-400" color="#6f42c1" />,
+    png: <FaFileImage className="h-6 w-6 text-gray-400" color="#6f42c1" />,
+    gif: <FaFileImage className="h-6 w-6 text-gray-400" color="#6f42c1" />,
+    svg: <FaFileImage className="h-6 w-6 text-gray-400" color="#6f42c1" />,
+    webp: <FaFileImage className="h-6 w-6 text-gray-400" color="#6f42c1" />,
+    mp4: <FaFileVideo className="h-6 w-6 text-gray-400" color="#ffc107" />,
+    mov: <FaFileVideo className="h-6 w-6 text-gray-400" color="#ffc107" />,
+    mp3: <FaFileAudio className="h-6 w-6 text-gray-400" color="#17a2b8" />,
   };
 
   // Return the matched icon or a default file icon
-  return iconMap[ext] || <FaFile size={size} color={color} />;
+  return iconMap[ext] || <FaFile className="h-6 w-6 text-gray-400" color={color} />;
 };
 
 export default FileIcon;

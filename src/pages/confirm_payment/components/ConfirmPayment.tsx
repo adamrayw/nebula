@@ -1,7 +1,7 @@
 import { ChevronLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "../../core/components/design-system/ui/button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../core/components/design-system/LoadingSpinner";
 import { ICreatePayment, IPaymentResponse } from "@/types/IPayment";
@@ -13,10 +13,11 @@ import { useEffect } from "react";
 import { apiRequest } from "@/api/apiService";
 
 const ConfirmPayment = () => {
-  const data = JSON.parse(sessionStorage.getItem("selectedPlan") || "{}");
-  const userId = JSON.parse(sessionStorage.getItem("user") || "{}").id;
-  const sessions = sessionStorage.getItem("user");
+  const data = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
+  const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
+  const sessions = localStorage.getItem("user");
   const location = useNavigate();
+  const queryClient = useQueryClient();
   const paymentServiceUrl = import.meta.env.VITE_PAYMENT_SERVICE_URL;
 
   useEffect(() => {
@@ -34,6 +35,9 @@ const ConfirmPayment = () => {
         const response = await apiRequest("post", paymentServiceUrl, "/payments", newData);
         return response as IPaymentResponse;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+    }
 });
 
   if (mutation.isSuccess) {

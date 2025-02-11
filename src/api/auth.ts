@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -19,8 +19,8 @@ export const auth = async <T>(url: string, data: ISignIn): Promise<T> => {
     try {
         const response = await instance.post(`${url}`, data)
 
-        sessionStorage.setItem("token", response.data.token)
-        sessionStorage.setItem("user", JSON.stringify(response.data.data))
+        localStorage.setItem("token", response.data.token)
+        localStorage.setItem("user", JSON.stringify(response.data.data))
 
         return response.data
     } catch (error: unknown) {
