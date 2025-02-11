@@ -111,6 +111,12 @@ const SignUpForm = () => {
                         required: true,
                       })}
                     />
+                      <label htmlFor="password">
+                      <span className="text-red-500 text-xs">
+                        {errors.email?.type === "required" &&
+                          "Email is required"}
+                      </span>
+                    </label>
                   </div>
                   <div>
                     <Label htmlFor="password">Password</Label>
