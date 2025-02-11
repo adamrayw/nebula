@@ -125,7 +125,7 @@ const Pricing = () => {
                   <Button
                   asChild
                   onClick={() => {
-                    sessionStorage.setItem("selectedPlan", JSON.stringify(plan));
+                    localStorage.setItem("selectedPlan", JSON.stringify(plan));
                   }}
                     className={`w-full ${
                       plan.popular
