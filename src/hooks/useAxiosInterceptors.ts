@@ -13,8 +13,8 @@ const useAxiosInterceptors = () => {
                 if (error.response && error.response.status === 403) {
                     console.log(error)
                     toast('Invalid token, please re-login');
-                    sessionStorage.removeItem('token');
-                    sessionStorage.removeItem('user');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
                     navigate('/signin');
                 }
                 return Promise.reject(error);
