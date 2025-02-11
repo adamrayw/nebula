@@ -13,9 +13,9 @@ import { useEffect } from "react";
 import { apiRequest } from "@/api/apiService";
 
 const ConfirmPayment = () => {
-  const data = JSON.parse(sessionStorage.getItem("selectedPlan") || "{}");
-  const userId = JSON.parse(sessionStorage.getItem("user") || "{}").id;
-  const sessions = sessionStorage.getItem("user");
+  const data = JSON.parse(localStorage.getItem("selectedPlan") || "{}");
+  const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
+  const sessions = localStorage.getItem("user");
   const location = useNavigate();
   const queryClient = useQueryClient();
   const paymentServiceUrl = import.meta.env.VITE_PAYMENT_SERVICE_URL;
