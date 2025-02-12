@@ -22,6 +22,15 @@ export interface IFile {
     starred: Starred
 }
 
+export interface FileUploadProps extends File {
+  category: string;
+  preview: Blob;
+  type: string;
+  name: string;
+  size: number;
+  status?: "success"
+}
+
 export interface FileIconProps {
   url: string;
   size?: number;
