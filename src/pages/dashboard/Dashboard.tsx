@@ -178,7 +178,7 @@ const Dashboard = () => {
 
   return (
     <div className="grid grid-cols-4 relative">
-      <div className="col-span-3 border-r h-screen px-10">
+      <div className="col-span-4 border-r h-screen px-10">
         <div className="flex items-center justify-between ">
           <SearchBtn setSearch={setSearch} refetch={refetch} />
           <div className="notif">
@@ -444,7 +444,7 @@ const Dashboard = () => {
             </Pagination>
           )}
       </div>
-      <div className="px-4">Activity</div>
+      {/* <div className="px-4">Activity</div> */}
     </div>
   );
 };
