@@ -86,8 +86,9 @@ const DialogUpload = () => {
     );
 
     // Filter out files that failed validation
-    const validFiles = filesWithPreviews
-      .filter((file): file is FileUploadProps => file !== undefined)
+    const validFiles = filesWithPreviews.filter(
+      (file): file is FileUploadProps => file !== undefined
+    );
 
     // If there are valid files, add them to the list
     if (validFiles.length > 0) {
@@ -156,7 +157,20 @@ const DialogUpload = () => {
   });
 
   const onSubmit = async () => {
-    let totalUploadSize = 0;
+    let newTotalSize = loggedUser?.data?.totalFileSize || 0;
+
+    for (const file of files) {
+      newTotalSize += file.size;
+      if (newTotalSize > loggedUser?.data?.limit) {
+        if (newTotalSize > loggedUser?.data?.limit) {
+          toast("Storage is not enough, upgrade to get more storage", {
+            icon: "🗄️",
+          });
+          return;
+        }
+        break;
+      }
+    }
 
     for (const file of files) {
       if (file.size > 10 * 1024 * 1024) {
@@ -165,18 +179,6 @@ const DialogUpload = () => {
           icon: "⚠️",
         });
         continue;
-      }
-
-      totalUploadSize += file.size;
-
-      if (
-        totalUploadSize + (loggedUser?.data?.totalFileSize || 0) >
-        loggedUser?.data?.limit
-      ) {
-        toast("Storage is not enough, upgrade to get more storage", {
-          icon: "🗄️",
-        });
-        return;
       }
 
       const data = new FormData();
@@ -235,7 +237,11 @@ const DialogUpload = () => {
                       <div className="flex items-center space-x-3 min-w-0">
                         {file?.preview ? (
                           <img
-                            src={typeof file?.preview === 'string' ? file.preview : URL.createObjectURL(file.preview)}
+                            src={
+                              typeof file?.preview === "string"
+                                ? file.preview
+                                : URL.createObjectURL(file.preview)
+                            }
                             alt={file?.name}
                             className="h-6 w-6 object-cover rounded"
                           />
