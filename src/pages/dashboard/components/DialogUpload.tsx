@@ -8,7 +8,7 @@ import {
 } from "@/pages/core/components/design-system/ui/dialog";
 import { Input } from "@/pages/core/components/design-system/ui/input";
 import { Label } from "@/pages/core/components/design-system/ui/label";
-import { Check, FileUp, UploadCloudIcon, X } from "lucide-react";
+import { Check, CloudUpload, UploadCloudIcon, X } from "lucide-react";
 import { formatFileSize } from "../utils/formatFileSize";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileUploadProps, IFile } from "@/types/IFile";
@@ -21,13 +21,8 @@ import { uploadFile } from "@/api/uploadFile";
 import FileIcon from "./FileIcon";
 import validateExtension from "../utils/validateExtension";
 
-interface ExtendedFile extends File {
-  category: string;
-  preview: string;
-}
-
 const DialogUpload = () => {
-  const { register, handleSubmit, setValue, watch } = useForm<IFile>();
+  const { register, handleSubmit, setValue } = useForm<IFile>();
   const [progress, setProgress] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [files, setFiles] = useState<FileUploadProps[]>([]);
@@ -36,7 +31,7 @@ const DialogUpload = () => {
   const loggedUser = useGetUser() as {
     data: { totalFileSize: number; limit: number };
   };
-  const file = (watch("file") ?? [])[0] as ExtendedFile | undefined;
+  // const file = (watch("file") ?? [])[0] as ExtendedFile | undefined;
   const user = localStorage.getItem("user");
   const userId = user ? JSON.parse(user).id : "";
 
@@ -96,39 +91,50 @@ const DialogUpload = () => {
     }
   }, []);
 
-  // Upload file by selecting from file dialog
-  useEffect(() => {
-    const getTypeFile = async () => {
-      if ((file?.size || 0) > 10 * 1024 * 1024) {
-        toast("File size maximum is 10MB", {
-          position: "bottom-center",
-          icon: "⚠️",
-        });
-        return;
-      }
+  type ExtendedFile = File & { category?: string; preview?: string };
 
-      const validationExt = await validateExtension(file);
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-      if (!validationExt) {
-        return;
-      }
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0] as ExtendedFile | undefined;
+    if (!file) return;
 
-      if (file) {
-        file.category = validationExt;
-      }
+    if (file.size > MAX_FILE_SIZE) {
+      toast("File size maximum is 10MB", {
+        position: "bottom-center",
+        icon: "⚠️",
+      });
+      return;
+    }
 
-      // Add preview URLs for image files
-      if (file && file.type.startsWith("image/")) {
-        file.preview = URL.createObjectURL(file);
-      }
+    const validationExt = await validateExtension(file);
+    if (!validationExt) {
+      return;
+    }
 
-      if (file) {
-        setFiles((prev) => [...prev, file as unknown as FileUploadProps]);
-      }
-    };
+    file.category = validationExt;
 
-    getTypeFile();
-  }, [file]);
+    // Tambahkan preview hanya untuk file gambar
+    if (file.type.startsWith("image/")) {
+      file.preview = URL.createObjectURL(file);
+    }
+
+    // Cek apakah file sudah ada di daftar
+    setFiles((prev) => {
+      const isDuplicate = prev.some(
+        (f) => f.name === file.name && f.size === file.size
+      );
+
+      if (isDuplicate) return prev;
+      const fileWithCategory = { ...file, category: file.category || "" };
+      return [...prev, fileWithCategory];
+    });
+
+    // Reset input file agar bisa pilih file yang sama lagi
+    setValue("file", new DataTransfer().files);
+  };
 
   // Mutation to upload file
   const mutation = useMutation({
@@ -163,6 +169,7 @@ const DialogUpload = () => {
       newTotalSize += file.size;
       if (newTotalSize > loggedUser?.data?.limit) {
         if (newTotalSize > loggedUser?.data?.limit) {
+          toast.dismiss();
           toast("Storage is not enough, upgrade to get more storage", {
             icon: "🗄️",
           });
@@ -213,9 +220,9 @@ const DialogUpload = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-white">
-          <FileUp />
-          Upload File
+        <Button variant="ghost" className="border bg-blue-500 text-white">
+          <CloudUpload />
+          {/* Upload File */}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[625px] w-[400px] sm:w-[800px] rounded-lg bg-white p-8 dark:bg-gray-950 max-h-[80vh] overflow-auto mx-auto sm:mx-auto md:mx-8 lg:mx-10">
@@ -318,7 +325,7 @@ const DialogUpload = () => {
                       `}
                         >
                           <div className="flex flex-col py-10 px-4 items-center justify-between space-y-2">
-                            <FileUp className="w-10 h-10" />
+                            <CloudUpload className="w-10 h-10" />
                             <span className="text-sm text-gray-500 text-center">
                               Browse your files or drag and drop here
                             </span>
@@ -332,6 +339,7 @@ const DialogUpload = () => {
                             id="file"
                             accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.mp3,.mp4,.png,.jpg,.jpeg,.gif,.svg,.webp"
                             {...register("file", { required: true })}
+                            onChange={handleFileChange}
                           />
                         </div>
                         {/* <p className="text-xs text-gray-300 font-normal mt-2 text-center">
