@@ -23,7 +23,7 @@ export interface IFile {
 }
 
 export interface FileUploadProps extends File {
-  category: string;
+  category?: string;
   preview?: string | Blob;
   type: string;
   name: string;

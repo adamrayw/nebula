@@ -113,7 +113,7 @@ const DialogUpload = () => {
     if (!validationExt) {
       return;
     }
-
+    
     file.category = validationExt;
 
     // Tambahkan preview hanya untuk file gambar
@@ -128,13 +128,15 @@ const DialogUpload = () => {
       );
 
       if (isDuplicate) return prev;
-      const fileWithCategory = { ...file, category: file.category || "" };
-      return [...prev, fileWithCategory];
+
+      return [...prev, file];
     });
 
     // Reset input file agar bisa pilih file yang sama lagi
     setValue("file", new DataTransfer().files);
   };
+
+  console.log(files)
 
   // Mutation to upload file
   const mutation = useMutation({
@@ -192,7 +194,7 @@ const DialogUpload = () => {
       data.append("file", file);
       data.append("userId", userId);
       data.append("originalSize", file.size.toString());
-      data.append("category", file.category);
+      data.append("category", file.category as string);
 
       try {
         await mutation.mutateAsync(data);
