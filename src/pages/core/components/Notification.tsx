@@ -29,7 +29,7 @@ const Notification = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="ml-3" size="icon">
+        <Button variant="ghost" className="mx-3" size="icon">
           <Bell />
         </Button>
       </DropdownMenuTrigger>

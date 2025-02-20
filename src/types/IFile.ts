@@ -24,11 +24,11 @@ export interface IFile {
 
 export interface FileUploadProps extends File {
   category: string;
-  preview: Blob;
+  preview?: string | Blob;
   type: string;
   name: string;
   size: number;
-  status?: "success"
+  status?: "success",
 }
 
 export interface FileIconProps {

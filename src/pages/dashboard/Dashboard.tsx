@@ -178,20 +178,20 @@ const Dashboard = () => {
 
   return (
     <div className="grid grid-cols-4 relative">
-      <div className="col-span-3 border-r h-screen px-10">
+      <div className="col-span-4 border-r h-screen px-10">
         <div className="flex items-center justify-between ">
           <SearchBtn setSearch={setSearch} refetch={refetch} />
           <div className="notif">
             <Notification />
           </div>
-        </div>
-        <CategoriesIndicator />
-        <div className="up-btn fixed right-0 bottom-0 p-4 z-40">
+          <div className="up-btn">
           {/* <h1 className="text-heading-3 !font-normal !text-gray-800 mb-4">
             Main Library
           </h1> */}
           <DialogUpload />
         </div>
+        </div>
+        <CategoriesIndicator />
         <Tabs defaultValue="files" className="mt-10">
           <TabsList>
             <TabsTrigger value="files" className="tab">
@@ -444,7 +444,7 @@ const Dashboard = () => {
             </Pagination>
           )}
       </div>
-      <div className="px-4">Activity</div>
+      {/* <div className="px-4">Activity</div> */}
     </div>
   );
 };
