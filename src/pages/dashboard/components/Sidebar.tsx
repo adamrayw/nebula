@@ -12,8 +12,10 @@ import {
 import {
   ChevronUp,
   CreditCard,
+  FileClock,
   Files,
   HardDrive,
+  Lock,
   LogOut,
   Star,
 } from "lucide-react";
@@ -51,11 +53,19 @@ const SidebarDashboard = () => {
       title: "My Files",
       url: "/dashboard",
       icon: <Files />,
+      isPaid: false,
     },
     {
       title: "Starred",
       url: "/dashboard/starred",
       icon: <Star />,
+      isPaid: false,
+    },
+    {
+      title: "Activity",
+      url: "/dashboard/activity",
+      icon: <FileClock />,
+      isPaid: true,
     },
   ];
 
@@ -87,12 +97,21 @@ const SidebarDashboard = () => {
 
                   <SidebarMenuButton
                     asChild
-                    className="text-heading-6 !text-gray-500 !font-semibold"
+                    className="text-heading-6 !text-gray-500 !font-semibold transition duration-100"
                     isActive={location.pathname === item.url}
                   >
-                    <Link to={item.url}>
-                      {item.icon}
-                      <span>{item.title}</span>
+                    <Link to={item.url} className="py-6">
+                      <div className="flex justify-between items-center w-full transition">
+                        <div className="flex items-center space-x-2">
+                          {item.icon}
+                          <p>{item.title}</p>
+                        </div>
+                        <div className={`${item.isPaid ? "block" : "hidden"} `}>
+                          <Lock
+                            size={14}
+                          />
+                        </div>
+                      </div>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
