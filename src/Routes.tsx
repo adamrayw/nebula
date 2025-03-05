@@ -6,6 +6,7 @@ import Home from "./pages/home/Home";
 import Starred from "./pages/dashboard/components/starred/Starred";
 import ConfirmPayment from "./pages/confirm_payment/components/ConfirmPayment";
 import PaymentHistory from "./pages/dashboard/components/user/components/PaymentHistory";
+import Activity from "./pages/dashboard/components/activity/Activity";
 
 const routes = [
   {
@@ -35,6 +36,10 @@ const routes = [
       {
         path: "starred",
         element: <Starred />,
+      },  
+      {
+        path: "activity",
+        element: <Activity />,
       },  
       {
         path: "payment-history",
