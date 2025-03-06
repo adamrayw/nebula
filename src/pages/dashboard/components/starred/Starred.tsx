@@ -32,12 +32,21 @@ import {
 } from "@/pages/core/components/design-system/ui/pagination";
 import { IFile } from "@/types/IFile";
 import { useStarredFetchFile } from "@/queries/useFetchStarredFiles";
+import DocViewer, { DocViewerRenderers, PDFRenderer } from "react-doc-viewer";
+// import { pdfjs } from "react-pdf";
+
+// Atur Worker untuk PDF.js agar bekerja di Vite
+// pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+//   "https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.js",
+//   import.meta.url
+// ).toString();
 import { apiRequest } from "@/api/apiService";
 
 const Starred = () => {
   const [search, setSearch] = useState<string>("");
   const [offset, setOffset] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const [selectedFile, setSelectedFile] = useState<IFile | null>(null);
   const queryClient = useQueryClient();
   const starredServiceUrl = import.meta.env.VITE_STARRED_SERVICE_URL;
 
@@ -93,6 +102,9 @@ const Starred = () => {
       if (data?.data?.length > 10) {
         setOffset(offset - 10);
         setPage(page - 1);
+      } else {
+        setOffset(0);
+        setPage(1);
       }
     }
   }, [handleRemoveStarred]);
@@ -107,6 +119,11 @@ const Starred = () => {
     if (page === data?.lastPage) return;
     setOffset(offset + 10);
     setPage(page + 1);
+  };
+
+  const handleFileClick = (file: IFile) => {
+    console.log("PDF URL:", file.location); //Debugging url pdf
+    setSelectedFile(file);
   };
 
   return (
@@ -129,7 +146,10 @@ const Starred = () => {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center space-x-2">
+                        <div
+                          className="flex items-center space-x-2 hover:cursor-pointer"
+                          onClick={() => handleFileClick(file)}
+                        >
                           <FileIcon url={file.originalName || ""} />
                           <p className="truncate max-w-64">
                             {file.originalName}
@@ -245,6 +265,46 @@ const Starred = () => {
             </PaginationItem>
           </PaginationContent>
         </Pagination>
+      )}
+
+      {/* Modal untuk menampilkan detail file */}
+      {selectedFile && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-4 rounded-lg w-11/12 max-w-4xl">
+            <h2 className="text-xl font-bold mb-4">
+              {selectedFile.originalName}
+            </h2>
+            <div className="mb-4">
+              <p>Size: {formatFileSize(selectedFile.size ?? 0)}</p>
+              <p>Uploaded on: {moment(selectedFile.createdAt).format("LL")}</p>
+            </div>
+            <div className="h-96">
+              <DocViewer
+                documents={[
+                  {
+                    uri: selectedFile.location || "",
+                    fileType: selectedFile.mimeType,
+                  },
+                ]}
+                pluginRenderers={[...DocViewerRenderers, PDFRenderer]}
+                config={{
+                  header: {
+                    disableHeader: false,
+                    disableFileName: false,
+                    retainURLParams: false,
+                  },
+                }}
+                // onError={(e) => console.error("DocViewer viewer:", e)}
+              />
+            </div>
+            <button
+              onClick={() => setSelectedFile(null)}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
