@@ -6,6 +6,7 @@ interface DetailFiles {
 }
 
 const DetailUpload: React.FC = () => {
+  // Example name docs
   const docs: DetailFiles[] = [{ uri: "./Bayar.pdf" }];
 
   return (
