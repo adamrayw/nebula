@@ -9,7 +9,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../../core/components/design-system/ui/sidebar";
-import { ChevronUp, Files, HardDrive, LogOut, Star } from "lucide-react";
+import {
+  ChevronUp,
+  CreditCard,
+  FileClock,
+  Files,
+  HardDrive,
+  Lock,
+  LogOut,
+  Star,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +36,7 @@ import { Separator } from "@/pages/core/components/design-system/ui/separator";
 
 const SidebarDashboard = () => {
   const [session, setSession] = useState<IUser>();
-  const sessions = sessionStorage.getItem("user");
+  const sessions = localStorage.getItem("user");
 
   const location = useLocation();
 
@@ -44,11 +53,19 @@ const SidebarDashboard = () => {
       title: "My Files",
       url: "/dashboard",
       icon: <Files />,
+      isPaid: false,
     },
     {
       title: "Starred",
       url: "/dashboard/starred",
       icon: <Star />,
+      isPaid: false,
+    },
+    {
+      title: "Activity",
+      url: "/dashboard/activity",
+      icon: <FileClock />,
+      isPaid: true,
     },
   ];
 
@@ -80,12 +97,21 @@ const SidebarDashboard = () => {
 
                   <SidebarMenuButton
                     asChild
-                    className="text-heading-6 !text-gray-500 !font-semibold"
+                    className="text-heading-6 !text-gray-500 !font-semibold transition duration-100"
                     isActive={location.pathname === item.url}
                   >
-                    <Link to={item.url}>
-                      {item.icon}
-                      <span>{item.title}</span>
+                    <Link to={item.url} className="py-6">
+                      <div className="flex justify-between items-center w-full transition">
+                        <div className="flex items-center space-x-2">
+                          {item.icon}
+                          <p>{item.title}</p>
+                        </div>
+                        <div className={`${item.isPaid ? "block" : "hidden"} `}>
+                          <Lock
+                            size={14}
+                          />
+                        </div>
+                      </div>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -104,9 +130,12 @@ const SidebarDashboard = () => {
                   variant="outline"
                   size="sm"
                   className="flex items-center"
+                  asChild
                 >
-                  <HardDrive size={20} />
-                  <p className="font-thin text-sm">Upgrade</p>
+                  <a href="/#pricing">
+                    <HardDrive size={20} />
+                    <p className="font-thin text-sm">Upgrade</p>
+                  </a>
                 </Button>
                 {/* <div className="upgrade flex items-center space-x-1 bg-gray-100 p-1 rounded-lg shadow-sm hover:cursor-pointer ">
                 </div> */}
@@ -127,7 +156,7 @@ const SidebarDashboard = () => {
               </Progress.Root>
               <p>
                 {((data?.totalFileSize ?? 0) / 1024 / 1024).toFixed(2)} MB of{" "}
-                {(52428800 / 1024 / 1024).toFixed(2)} MB
+                {((data?.limit ?? 1) / 1024 / 1024).toFixed(2)} MB
               </p>
             </div>
           </SidebarMenuItem>
@@ -158,13 +187,25 @@ const SidebarDashboard = () => {
               >
                 <DropdownMenuItem asChild>
                   <Button
+                    asChild
+                    variant="ghost"
+                    type="submit"
+                    className="w-full flex justify-start"
+                  >
+                    <Link to="/dashboard/payment-history">
+                      <CreditCard /> Payment History
+                    </Link>
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Button
                     variant="ghost"
                     type="submit"
                     className="w-full flex justify-start"
                     onClick={() => {
                       window.location.href = "/";
-                      sessionStorage.removeItem("user");
-                      sessionStorage.removeItem("token");
+                      localStorage.removeItem("user");
+                      localStorage.removeItem("token");
                     }}
                   >
                     <LogOut /> Sign out

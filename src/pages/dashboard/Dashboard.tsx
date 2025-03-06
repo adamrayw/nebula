@@ -32,7 +32,7 @@ import {
   PopoverTrigger,
 } from "../core/components/design-system/ui/popover";
 import { Button } from "../core/components/design-system/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useFetchFile } from "@/queries/useFetchFiles";
 import {
@@ -44,11 +44,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../core/components/design-system/ui/pagination";
-import { deleteFile } from "@/api/file";
-import { post, remove } from "@/api/starred";
 import { AxiosError } from "axios";
 import { FaArrowDown, FaArrowUp, FaStar } from "react-icons/fa";
 import CategoriesIndicator from "./components/CategoriesIndicator";
+import { apiRequest } from "@/api/apiService";
+import Notification from "../core/components/Notification";
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
@@ -57,6 +57,13 @@ const Dashboard = () => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [sortOrder, setSortOrder] = useState<string>("DESC");
   const queryClient = useQueryClient();
+  const fileServiceUrl = import.meta.env.VITE_FILE_SERVICE_URL;
+  const starredServiceUrl = import.meta.env.VITE_STARRED_SERVICE_URL;
+
+  const isFirstRender = useRef({
+    effect1: true,
+    effect2: true,
+  });
 
   const { data, isLoading, isError, refetch } = useFetchFile(
     search,
@@ -72,17 +79,29 @@ const Dashboard = () => {
   }, [isError]);
 
   useEffect(() => {
+    if (isFirstRender.current.effect1) {
+      isFirstRender.current.effect1 = false;
+      return;
+    }
     refetch();
-  }, [refetch, offset, sortBy, sortOrder]);
+  }, [offset, sortBy, sortOrder]);
 
   useEffect(() => {
+    if (isFirstRender.current.effect2) {
+      isFirstRender.current.effect2 = false;
+      return;
+    }
     setOffset(0);
     refetch();
   }, [search]);
 
   const deleteHandler = useMutation({
     mutationFn: async (fileId: string) => {
-      deleteFile("/file/deleteFile/", fileId);
+      return await apiRequest(
+        "delete",
+        fileServiceUrl,
+        "/file/deleteFile/" + fileId
+      );
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries()]);
@@ -91,17 +110,25 @@ const Dashboard = () => {
         duration: 3000,
       });
     },
-    onError: () => {
-      toast.error("File Failed to delete");
+    onError: (error: AxiosError) => {
+      toast.error("Failed to delete file, reason: " + error.message);
     },
   });
 
   const handleStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await post(`/file/starred/${fileId}`);
+      return await apiRequest(
+        `post`,
+        starredServiceUrl,
+        `/file/starred/${fileId}`
+      );
     },
     onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["files"],
+        }),
+      ]);
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
@@ -110,10 +137,18 @@ const Dashboard = () => {
 
   const handleRemoveStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await remove(`/file/starred/${fileId}`);
+      return await apiRequest(
+        `delete`,
+        starredServiceUrl,
+        `/file/starred/${fileId}`
+      );
     },
     onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["files"],
+        }),
+      ]);
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
@@ -143,15 +178,20 @@ const Dashboard = () => {
 
   return (
     <div className="grid grid-cols-4 relative">
-      <div className="col-span-3 border-r h-screen px-10">
-        <SearchBtn setSearch={setSearch} refetch={refetch} />
-        <CategoriesIndicator />
-        <div className="up-btn fixed right-0 bottom-0 p-4 z-40">
+      <div className="col-span-4 border-r h-screen px-10">
+        <div className="flex items-center justify-between ">
+          <SearchBtn setSearch={setSearch} refetch={refetch} />
+          <div className="notif">
+            <Notification />
+          </div>
+          <div className="up-btn">
           {/* <h1 className="text-heading-3 !font-normal !text-gray-800 mb-4">
             Main Library
           </h1> */}
           <DialogUpload />
         </div>
+        </div>
+        <CategoriesIndicator />
         <Tabs defaultValue="files" className="mt-10">
           <TabsList>
             <TabsTrigger value="files" className="tab">
@@ -404,7 +444,7 @@ const Dashboard = () => {
             </Pagination>
           )}
       </div>
-      <div className="px-4">Activity</div>
+      {/* <div className="px-4">Activity</div> */}
     </div>
   );
 };

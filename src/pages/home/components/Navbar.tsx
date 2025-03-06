@@ -13,7 +13,7 @@ import { Link } from "react-router";
 
 const Navbar = () => {
   const [session, setSession] = useState<IUser>();
-  const sessions = sessionStorage.getItem("user");
+  const sessions = localStorage.getItem("user");
 
   useEffect(() => {
     if (sessions) {
@@ -47,6 +47,12 @@ const Navbar = () => {
             >
               Features
             </Link>
+            <a
+              href="#pricing"
+              className="text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+            >
+              Pricing
+            </a>
           </div>
 
           {/* Register Button */}
@@ -80,8 +86,8 @@ const Navbar = () => {
                       <p
                         onClick={() => {
                           window.location.href = "/";
-                          sessionStorage.removeItem("user");
-                          sessionStorage.removeItem("token");
+                          localStorage.removeItem("user");
+                          localStorage.removeItem("token");
                         }}
                       >
                         <LogOut /> Sign out

@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import {
   Table,
@@ -20,7 +19,6 @@ import moment from "moment";
 import FileIcon from "../FileIcon";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import { post, remove } from "@/api/starred";
 import { formatFileSize } from "../../utils/formatFileSize";
 import SearchBtn from "../../components/SearchBtn";
 import {
@@ -42,6 +40,7 @@ import DocViewer, { DocViewerRenderers, PDFRenderer } from "react-doc-viewer";
 //   "https://unpkg.com/pdfjs-dist@4.10.38/build/pdf.worker.min.js",
 //   import.meta.url
 // ).toString();
+import { apiRequest } from "@/api/apiService";
 
 const Starred = () => {
   const [search, setSearch] = useState<string>("");
@@ -49,11 +48,17 @@ const Starred = () => {
   const [page, setPage] = useState<number>(1);
   const [selectedFile, setSelectedFile] = useState<IFile | null>(null);
   const queryClient = useQueryClient();
+  const starredServiceUrl = import.meta.env.VITE_STARRED_SERVICE_URL;
 
   const { data, isLoading, isError, refetch } = useStarredFetchFile(
     search,
     offset
   );
+
+  const isFirstRender = useRef({
+    effect1: true,
+    effect2: true,
+  });
 
   useEffect(() => {
     if (isError) {
@@ -62,32 +67,30 @@ const Starred = () => {
   }, [isError]);
 
   useEffect(() => {
+    if (isFirstRender.current.effect1) {
+      isFirstRender.current.effect1 = false;
+      return;
+    }
     refetch();
   }, [refetch, offset]);
 
   useEffect(() => {
+    if (isFirstRender.current.effect2) {
+      isFirstRender.current.effect2 = false;
+      return;
+    }
     setOffset(0);
     refetch();
   }, [search]);
 
-  const handleStarred = useMutation({
-    mutationFn: async (fileId: string) => {
-      return await post(`/file/starred/${fileId}`);
-    },
-    onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
-    },
-    onError: (error: AxiosError) => {
-      toast.error(error.message);
-    },
-  });
-
   const handleRemoveStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await remove(`/file/starred/${fileId}`);
+      return await apiRequest(`delete`, starredServiceUrl, `/file/starred/${fileId}`);
     },
     onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
+      Promise.all([queryClient.invalidateQueries({
+        queryKey: ["starredFiles"],
+      })]);
     },
     onError: (error: AxiosError) => {
       toast.error(error.message);
@@ -163,7 +166,7 @@ const Starred = () => {
                 <TableCell>{moment(file.createdAt).format("LL")}</TableCell>
                 <TableCell>
                   <div className="flex items-center">
-                    {file.starred !== null ? (
+                    {file.starred !== null && (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -176,20 +179,6 @@ const Starred = () => {
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Remove from Starred</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Star
-                              className="size-4 hover:cursor-pointer"
-                              onClick={() => handleStarred.mutate(file.id)}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Add to Starred</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>

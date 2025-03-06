@@ -15,7 +15,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { auth } from "@/api/user";
+import { auth } from "@/api/auth";
 import AlertError from "./AlertError";
 
 const SignUpForm = () => {
@@ -111,6 +111,12 @@ const SignUpForm = () => {
                         required: true,
                       })}
                     />
+                      <label htmlFor="password">
+                      <span className="text-red-500 text-xs">
+                        {errors.email?.type === "required" &&
+                          "Email is required"}
+                      </span>
+                    </label>
                   </div>
                   <div>
                     <Label htmlFor="password">Password</Label>

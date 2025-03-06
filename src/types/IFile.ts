@@ -22,24 +22,14 @@ export interface IFile {
   starred: Starred;
 }
 
-// export interface IFile {
-//   file: {
-//     id: string;
-//     originalName: string;
-//     url: string;
-//     type?: string;
-//     size?: number;
-//     userId: string;
-//     mimeType?: string;
-//     location: string;
-//     categoryId?: string | null;
-//     createdAt: string;
-//     updatedAt: string;
-//     starred: Starred;
-//   } | null;
-//   isOpen: boolean;
-//   onClose: () => void;
-// }
+export interface FileUploadProps extends File {
+  category?: string;
+  preview?: string | Blob;
+  type: string;
+  name: string;
+  size: number;
+  status?: "success",
+}
 
 export interface FileIconProps {
   url: string;

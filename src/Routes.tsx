@@ -5,6 +5,9 @@ import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import Home from "./pages/home/Home";
 import Starred from "./pages/dashboard/components/starred/Starred";
 import DetailUpload from "./pages/dashboard/components/DetailUpload";
+import ConfirmPayment from "./pages/confirm_payment/components/ConfirmPayment";
+import PaymentHistory from "./pages/dashboard/components/user/components/PaymentHistory";
+import Activity from "./pages/dashboard/components/activity/Activity";
 
 const routes = [
   {
@@ -25,6 +28,10 @@ const routes = [
     element: <SignInForm />,
   },
   {
+    path: "/confirm-payment",
+    element: <ConfirmPayment />,
+  },
+  {
     path: "/dashboard",
     element: <DashboardLayout />,
     children: [
@@ -35,6 +42,14 @@ const routes = [
       {
         path: "starred",
         element: <Starred />,
+      },  
+      {
+        path: "activity",
+        element: <Activity />,
+      },  
+      {
+        path: "payment-history",
+        element: <PaymentHistory />,
       },
     ],
   },
