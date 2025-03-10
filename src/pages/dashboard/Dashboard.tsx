@@ -120,7 +120,7 @@ const Dashboard = () => {
       return await apiRequest(
         `post`,
         starredServiceUrl,
-        `/file/starred/${fileId}`
+        `/file/starred/${fileId}?offset=${offset}`
       );
     },
     onSuccess: () => {
@@ -140,7 +140,7 @@ const Dashboard = () => {
       return await apiRequest(
         `delete`,
         starredServiceUrl,
-        `/file/starred/${fileId}`
+        `/file/starred/${fileId}?offset=${offset}`
       );
     },
     onSuccess: () => {

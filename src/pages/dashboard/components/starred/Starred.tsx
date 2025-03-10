@@ -85,7 +85,7 @@ const Starred = () => {
 
   const handleRemoveStarred = useMutation({
     mutationFn: async (fileId: string) => {
-      return await apiRequest(`delete`, starredServiceUrl, `/file/starred/${fileId}`);
+      return await apiRequest(`delete`, starredServiceUrl, `/file/starred/${fileId}?offset=${offset}`);
     },
     onSuccess: () => {
       Promise.all([queryClient.invalidateQueries({
@@ -122,7 +122,6 @@ const Starred = () => {
   };
 
   const handleFileClick = (file: IFile) => {
-    console.log("PDF URL:", file.location); //Debugging url pdf
     setSelectedFile(file);
   };
 
@@ -294,8 +293,8 @@ const Starred = () => {
                     retainURLParams: false,
                   },
                 }}
-                // onError={(e) => console.error("DocViewer viewer:", e)}
-              />
+                // onError={(e) => console.error("DocViewer viewer:", e)}         
+                />
             </div>
             <button
               onClick={() => setSelectedFile(null)}

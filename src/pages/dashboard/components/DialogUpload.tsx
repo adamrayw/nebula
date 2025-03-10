@@ -136,8 +136,6 @@ const DialogUpload = () => {
     setValue("file", new DataTransfer().files);
   };
 
-  console.log(files)
-
   // Mutation to upload file
   const mutation = useMutation({
     mutationFn: (data: FormData) =>
