@@ -185,11 +185,11 @@ const Dashboard = () => {
             <Notification />
           </div>
           <div className="up-btn">
-          {/* <h1 className="text-heading-3 !font-normal !text-gray-800 mb-4">
+            {/* <h1 className="text-heading-3 !font-normal !text-gray-800 mb-4">
             Main Library
           </h1> */}
-          <DialogUpload />
-        </div>
+            <DialogUpload />
+          </div>
         </div>
         <CategoriesIndicator />
         <Tabs defaultValue="files" className="mt-10">
@@ -197,12 +197,16 @@ const Dashboard = () => {
             <TabsTrigger value="files" className="tab">
               Files
             </TabsTrigger>
+            <TabsTrigger value="folders" className="tab">
+              Folders
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="files">
             <div className="my-5">
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead></TableHead>
                     <TableHead
                       onClick={() => handleSort("originalName")}
                       className="hover:cursor-pointer"
@@ -260,7 +264,40 @@ const Dashboard = () => {
                 <TableBody>
                   {data?.data?.map((file: IFile) => (
                     <TableRow key={file.id}>
-                      <TableCell className="font-medium truncate max-w-64">
+                      <TableCell className="pr-0">
+                        {file.starred !== null ? (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <FaStar
+                                  className="size-4 hover:cursor-pointer text-yellow-400"
+                                  onClick={() =>
+                                    handleRemoveStarred.mutate(file.id)
+                                  }
+                                />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Remove to Starred</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ) : (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Star
+                                  className="size-4 hover:cursor-pointer"
+                                  onClick={() => handleStarred.mutate(file.id)}
+                                />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Add to Starred</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium truncate max-w-64 pl-0">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
@@ -285,40 +322,6 @@ const Dashboard = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center">
-                          {file.starred !== null ? (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <FaStar
-                                    className="size-4 hover:cursor-pointer text-yellow-400"
-                                    onClick={() =>
-                                      handleRemoveStarred.mutate(file.id)
-                                    }
-                                  />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Remove to Starred</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          ) : (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Star
-                                    className="size-4 hover:cursor-pointer"
-                                    onClick={() =>
-                                      handleStarred.mutate(file.id)
-                                    }
-                                  />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Add to Starred</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          )}
-
                           <Popover>
                             <PopoverTrigger asChild>
                               <Button variant="ghost">
