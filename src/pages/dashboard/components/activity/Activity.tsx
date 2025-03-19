@@ -48,26 +48,22 @@ const Activity = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-  }
+  };
 
   return (
     <div className="px-10">
       <h1 className="text-2xl font-semibold mb-5">Activity Log</h1>
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center">
-          <span className="text-sm font-semibold mr-2">Order:</span>
+          {/* <span className="text-sm font-semibold mr-2">Urut:</span> */}
           <Select onValueChange={handleOrderChange} defaultValue={order}>
             <SelectTrigger>
               <SelectValue placeholder="Select action" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="ascending">
-                  Terlama
-                </SelectItem>
-                <SelectItem value="decending">
-                  Terbaru
-                </SelectItem>
+                <SelectItem value="ascending">Terlama</SelectItem>
+                <SelectItem value="decending">Terbaru</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -85,6 +81,11 @@ const Activity = () => {
         </div>
       </div>
       <div className="flex flex-col gap-5">
+        {data?.data?.length === 0 && (
+          <p className="text-center my-4 text-sm">
+            No activity found.
+          </p>
+        )}
         {data?.data.map((activity: IActivity) => (
           <div
             key={activity.id}
