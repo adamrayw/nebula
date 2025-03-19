@@ -100,7 +100,7 @@ const Dashboard = () => {
       return await apiRequest(
         "delete",
         fileServiceUrl,
-        "/file/deleteFile/" + fileId
+        `/file/deleteFile/${fileId}?offset=${offset}`
       );
     },
     onSuccess: () => {
