@@ -8,6 +8,7 @@ import DetailUpload from "./pages/dashboard/components/DetailUpload";
 import ConfirmPayment from "./pages/confirm_payment/components/ConfirmPayment";
 import PaymentHistory from "./pages/dashboard/components/user/components/PaymentHistory";
 import Activity from "./pages/dashboard/components/activity/Activity";
+import Trash from "./pages/dashboard/components/trash/Trash";
 
 const routes = [
   {
@@ -50,6 +51,10 @@ const routes = [
       {
         path: "payment-history",
         element: <PaymentHistory />,
+      },
+      {
+        path: "trash",
+        element: <Trash />,
       },
     ],
   },
