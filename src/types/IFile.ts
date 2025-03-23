@@ -19,6 +19,7 @@ export interface IFile {
   location?: string;
   createdAt?: string;
   updatedAt?: string;
+  deletedAt?: string;
   starred: Starred;
 }
 
