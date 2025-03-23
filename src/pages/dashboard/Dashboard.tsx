@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "../core/components/design-system/ui/table";
-import { formatFileSize } from "./utils/formatFileSize";
+import { formatFileSize } from "../dashboard/utils/formatFileSize";
 import {
   Tooltip,
   TooltipContent,
@@ -25,7 +25,7 @@ import {
 import moment from "moment";
 import FileIcon from "./components/FileIcon";
 import { IFile } from "@/types/IFile";
-import { Download, Ellipsis, Star, Trash } from "lucide-react";
+import { Download, Ellipsis, Star } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -49,6 +49,7 @@ import { FaArrowDown, FaArrowUp, FaStar } from "react-icons/fa";
 import CategoriesIndicator from "./components/CategoriesIndicator";
 import { apiRequest } from "@/api/apiService";
 import Notification from "../core/components/Notification";
+import DialogConfirmDelete from "./components/DIalogMoveToTrash";
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
@@ -57,7 +58,6 @@ const Dashboard = () => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [sortOrder, setSortOrder] = useState<string>("DESC");
   const queryClient = useQueryClient();
-  const fileServiceUrl = import.meta.env.VITE_FILE_SERVICE_URL;
   const starredServiceUrl = import.meta.env.VITE_STARRED_SERVICE_URL;
 
   const isFirstRender = useRef({
@@ -94,26 +94,6 @@ const Dashboard = () => {
     setOffset(0);
     refetch();
   }, [search]);
-
-  const deleteHandler = useMutation({
-    mutationFn: async (fileId: string) => {
-      return await apiRequest(
-        "delete",
-        fileServiceUrl,
-        `/file/deleteFile/${fileId}?offset=${offset}`
-      );
-    },
-    onSuccess: () => {
-      Promise.all([queryClient.invalidateQueries()]);
-      toast.success("File deleted Successfully", {
-        position: "bottom-center",
-        duration: 3000,
-      });
-    },
-    onError: (error: AxiosError) => {
-      toast.error("Failed to delete file, reason: " + error.message);
-    },
-  });
 
   const handleStarred = useMutation({
     mutationFn: async (fileId: string) => {
@@ -328,7 +308,7 @@ const Dashboard = () => {
                                 <Ellipsis />
                               </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-40 p-2" asChild>
+                            <PopoverContent className="w-48 p-2" asChild>
                               <div className="flex flex-col space-y-2 justify-start items-start">
                                 <Button
                                   variant="ghost"
@@ -340,16 +320,12 @@ const Dashboard = () => {
                                     Download
                                   </a>
                                 </Button>
-                                <Button
-                                  variant="ghost"
-                                  className="text-red-500 hover:text-red-700 w-full fex justify-start"
-                                  onClick={() => {
-                                    deleteHandler.mutate(file.id);
-                                  }}
-                                >
-                                  <Trash />
-                                  Delete
-                                </Button>
+                                <div className="confirm-delete-btn w-full">
+                                  <DialogConfirmDelete
+                                    offset={offset}
+                                    fileId={file.id}
+                                  />
+                                </div>
                                 {/* <Button variant="ghost">Delete</Button> */}
                               </div>
                             </PopoverContent>
