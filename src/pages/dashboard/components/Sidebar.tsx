@@ -4,6 +4,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -18,6 +19,7 @@ import {
   Lock,
   LogOut,
   Star,
+  Trash,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -33,6 +35,7 @@ import { Link, useLocation } from "react-router";
 import * as Progress from "@radix-ui/react-progress";
 import { useGetUser } from "@/queries/useFetchUser";
 import { Separator } from "@/pages/core/components/design-system/ui/separator";
+import { useFetchTrash } from "@/queries/useFetchFiles";
 
 const SidebarDashboard = () => {
   const [session, setSession] = useState<IUser>();
@@ -62,6 +65,15 @@ const SidebarDashboard = () => {
       isPaid: false,
     },
     {
+      title: "Trash",
+      url: "/dashboard/trash",
+      icon: <Trash />,
+      isPaid: false,
+    },
+  ];
+
+  const premiumItems = [
+    {
       title: "Activity",
       url: "/dashboard/activity",
       icon: <FileClock />,
@@ -73,6 +85,8 @@ const SidebarDashboard = () => {
     data?: { totalFileSize?: number; limit: number };
   };
 
+  const { data: dataTrash } = useFetchTrash();
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -80,6 +94,7 @@ const SidebarDashboard = () => {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarGroupLabel>Files</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -107,9 +122,53 @@ const SidebarDashboard = () => {
                           <p>{item.title}</p>
                         </div>
                         <div className={`${item.isPaid ? "block" : "hidden"} `}>
-                          <Lock
-                            size={14}
-                          />
+                          <Lock size={14} />
+                        </div>
+                        <div
+                          className={`${
+                            item.title === "Trash" ? "block" : "hidden"
+                          } `}
+                        >
+                          <div className="badge bg-blue-500 text-white rounded-full w-6 h-6 flex justify-center items-center">
+                            <p>{dataTrash?.data.length}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+          <SidebarGroupLabel>Premium Features</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {premiumItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  {/* <SidebarMenuButton
+                    asChild
+                    className="text-heading-6 !text-gray-500 !font-semibold"
+                    isActive={window.location.pathname === item.url}
+                  >
+                    <Link to={item.url}>
+                      {item.icon}
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton> */}
+
+                  <SidebarMenuButton
+                    asChild
+                    className="text-heading-6 !text-gray-500 !font-semibold transition duration-100"
+                    isActive={location.pathname === item.url}
+                  >
+                    <Link to={item.url} className="py-6">
+                      <div className="flex justify-between items-center w-full transition">
+                        <div className="flex items-center space-x-2">
+                          {item.icon}
+                          <p>{item.title}</p>
+                        </div>
+                        <div className={`${item.isPaid ? "block" : "hidden"} `}>
+                          <Lock size={14} />
                         </div>
                       </div>
                     </Link>

@@ -32,3 +32,16 @@ export function useFetchCategories() {
         }
     })
 }
+
+export function useFetchTrash() {
+    return useQuery({
+        queryKey: ['trash'],
+        queryFn: async () => {
+            const response = await apiRequest("get", fileUrl, "/file/trash") as { data: IFile[] }
+
+            return {
+                data: response.data
+            }
+        }
+    })
+}
