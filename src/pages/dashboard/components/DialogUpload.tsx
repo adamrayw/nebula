@@ -13,13 +13,21 @@ import { formatFileSize } from "../utils/formatFileSize";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileUploadProps, IFile } from "@/types/IFile";
 import { useForm } from "react-hook-form";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Progress } from "@/pages/core/components/design-system/ui/progress";
 import toast from "react-hot-toast";
 import { useGetUser } from "@/queries/useFetchUser";
 import { uploadFile } from "@/api/uploadFile";
 import FileIcon from "./FileIcon";
 import validateExtension from "../utils/validateExtension";
+import axios from "axios";
+import {
+  deleteFileFromDB,
+  getFileFromDB,
+  saveFileToDB,
+} from "../helpers/indexedDBUtils";
+
+const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB per chunk
 
 const DialogUpload = () => {
   const { register, handleSubmit, setValue } = useForm<IFile>();
@@ -27,6 +35,13 @@ const DialogUpload = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [files, setFiles] = useState<FileUploadProps[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [uploadId, setUploadId] = useState<string>("");
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [uploadedParts, setUploadedParts] = useState<
+    { PartNumber: number; ETag: string }[]
+  >([]);
+  const currentChunk = useRef(0);
+  const isPaused = useRef(false);
   const queryClient = useQueryClient();
   const loggedUser = useGetUser() as {
     data: { totalFileSize: number; limit: number };
@@ -44,6 +59,205 @@ const DialogUpload = () => {
     e.preventDefault();
     setIsDragging(false);
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const savedFile = await getFileFromDB();
+      if (savedFile) {
+        setFiles([savedFile as FileUploadProps]);
+      }
+    })();
+  }, []);
+
+  const saveUploadProgress = (
+    uploadId: string,
+    uploadedParts: { PartNumber: number; ETag: string }[],
+    currentChunk: number
+  ) => {
+    localStorage.setItem(
+      "uploadProgress",
+      JSON.stringify({ uploadId, uploadedParts, currentChunk })
+    );
+  };
+
+  const getSavedProgress = () => {
+    const data = localStorage.getItem("uploadProgress");
+    return data ? JSON.parse(data) : null;
+  };
+
+  const startMultipartUpload = async () => {
+    const file = files[0];
+
+    if (!file) return;
+
+    await saveFileToDB(file); // Save file to IndexedDB
+
+    const savedProgress = getSavedProgress();
+    console.log(savedProgress)
+    if (savedProgress) {
+      console.log("Resuming upload from saved progress...");
+      setUploadId(savedProgress.uploadId);
+      setUploadedParts(savedProgress.uploadedParts);
+      currentChunk.current = savedProgress.currentChunk;
+      uploadChunks(savedProgress.uploadId);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/file/uploadMulti",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fileName: file.name,
+            fileType: file.type,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log(data.data);
+      setUploadId(data.data);
+      uploadChunks(data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const uploadChunks = async (uploadId: string) => {
+    let file = files[0];
+
+    console.log(file)
+
+    if (!file) {
+      const dbFile = await getFileFromDB(); // Get file from IndexedDB
+      if (!dbFile) {
+        console.error("No file found in IndexedDB");
+        return;
+      }
+      file = dbFile;
+    }
+
+    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+    const uploadedPartsCopy = [...uploadedParts];
+    let uploadedSize = currentChunk.current * CHUNK_SIZE;
+
+    while (currentChunk.current < totalChunks && !isPaused.current) {
+      const start = currentChunk.current * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const chunk = file.slice(start, end); // Ambil bagian file
+
+      // Gunakan FormData untuk mengunggah chunk
+      const formData = new FormData();
+      formData.append("uploadId", uploadId);
+      formData.append("fileName", file.name);
+      formData.append("partNumber", (currentChunk.current + 1).toString());
+      formData.append("filePart", chunk); // Tambahkan chunk ke FormData
+
+      try {
+        setUploading(true);
+        const response = await axios.post(
+          "http://localhost:8080/api/file/upload-part",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+            onUploadProgress: (progressEvent) => {
+              // const chunkProgress = Math.round(
+              //   (progressEvent.loaded / (progressEvent?.total ?? 1)) * 100
+              // );
+
+              const totalProgress = Math.round(
+                ((uploadedSize + progressEvent.loaded) / file.size) * 100
+              );
+
+              setProgress(totalProgress);
+            },
+          }
+        );
+
+        uploadedPartsCopy.push({
+          PartNumber: currentChunk.current + 1,
+          ETag: response.data.ETag,
+        });
+
+        uploadedSize += chunk.size;
+
+        setUploadedParts(uploadedPartsCopy);
+        currentChunk.current++;
+
+        // Simpan progress setelah setiap chunk
+        saveUploadProgress(uploadId, uploadedPartsCopy, currentChunk.current);
+
+        if (currentChunk.current === totalChunks) {
+          setProgress(100);
+          completeUpload(uploadId, uploadedPartsCopy);
+        }
+      } catch (error) {
+        console.error(
+          `Error uploading chunk ${currentChunk.current + 1}:`,
+          error
+        );
+        break; // Hentikan loop jika terjadi error
+      }
+    }
+  };
+
+  const pauseUpload = () => {
+    isPaused.current = true;
+    setUploading(false);
+  };
+
+  const resumeUpload = () => {
+    const savedProgress = getSavedProgress();
+    if (!savedProgress) return;
+  
+    console.log("Resuming upload...");
+    setUploadId(savedProgress.uploadId);
+    setUploadedParts(savedProgress.uploadedParts);
+    currentChunk.current = savedProgress.currentChunk;
+    isPaused.current = false;
+    uploadChunks(savedProgress.uploadId);
+  };
+
+  const completeUpload = async (
+    uploadId: string,
+    uploadedParts: { PartNumber: number; ETag: string }[]
+  ) => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/file/complete-upload",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uploadId,
+            fileName: files[0]?.name,
+            uploadedParts,
+          }),
+        }
+      );
+  
+      await deleteFileFromDB(); // Hapus file dari IndexedDB setelah upload selesai
+      localStorage.removeItem("uploadProgress"); // Hapus progress upload
+      const data = await response.json();
+      console.log("UPLOAD COMPLETE! : ", data);
+      setUploading(false);
+      setUploadedParts([]);
+      setProgress(0);
+      setFiles([]);
+      setUploadId("");
+      currentChunk.current = 0;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // Upload file by dragging and dropping
   const handleDrop = useCallback(async (e: React.DragEvent) => {
@@ -101,19 +315,19 @@ const DialogUpload = () => {
     const file = event.target.files?.[0] as ExtendedFile | undefined;
     if (!file) return;
 
-    if (file.size > MAX_FILE_SIZE) {
-      toast("File size maximum is 10MB", {
-        position: "bottom-center",
-        icon: "⚠️",
-      });
-      return;
-    }
+    // if (file.size > MAX_FILE_SIZE) {
+    //   toast("File size maximum is 10MB", {
+    //     position: "bottom-center",
+    //     icon: "⚠️",
+    //   });
+    //   return;
+    // }
 
     const validationExt = await validateExtension(file);
     if (!validationExt) {
       return;
     }
-    
+
     file.category = validationExt;
 
     // Tambahkan preview hanya untuk file gambar
@@ -207,7 +421,7 @@ const DialogUpload = () => {
   };
 
   useEffect(() => {
-    setFiles([]);
+    // setFiles([]);
     setValue("file", new DataTransfer().files);
     setProgress(0);
     mutation.reset();
@@ -384,6 +598,24 @@ const DialogUpload = () => {
         {/* <DialogFooter>
           <Button type="submit">Save changes</Button>
         </DialogFooter> */}
+        {/* test multi upload  */}
+        <Button onClick={startMultipartUpload} disabled={uploading}>
+          Mulai Upload
+        </Button>
+        {uploading && (
+          <>
+            <Button onClick={pauseUpload}>Pause</Button>
+          </>
+        )}
+        {isPaused.current && (
+          <Button onClick={resumeUpload} disabled={uploading}>
+            Resume
+          </Button>
+        )}
+        <div className="w-full">
+          <progress className="w-full" value={progress} max="100"></progress>
+          <p>{progress}%</p>
+        </div>
       </DialogContent>
     </Dialog>
   );
