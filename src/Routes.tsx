@@ -9,6 +9,7 @@ import ConfirmPayment from "./pages/confirm_payment/components/ConfirmPayment";
 import PaymentHistory from "./pages/dashboard/components/user/components/PaymentHistory";
 import Activity from "./pages/dashboard/components/activity/Activity";
 import Trash from "./pages/dashboard/components/trash/Trash";
+import Folder from "./pages/dashboard/components/folders/Folder";
 
 const routes = [
   {
@@ -40,6 +41,10 @@ const routes = [
         path: "",
         element: <Dashboard />,
       },
+      {
+        path: "folders/*",
+        element: <Folder />,
+      },  
       {
         path: "starred",
         element: <Starred />,
