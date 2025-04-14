@@ -20,12 +20,12 @@ import { Link, useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import FileIcon from "../FileIcon";
 import { IFolder } from "@/types/IFolder";
-import DialogAddFolder from "../DIalogAddFolder";
+import DialogAddFolder from "../DialogAddFolder";
 
 const Folder = () => {
   const location = useLocation();
   const [folderHierarchy, setFolderHierarchy] = useState<string[]>([]);
-  const [currentFolder, setCurrentFolder] = useState<IFolder[] | null>(null);
+  const [currentFolder, setCurrentFolder] = useState<IFolder | null>(null);
 
   useEffect(() => {
     const subPath = location.pathname.replace("/dashboard/folders/", "");
@@ -42,7 +42,7 @@ const Folder = () => {
 
   useEffect(() => {
     if (currentId === "folders") {
-      setCurrentFolder(data?.folders || null);
+      setCurrentFolder(data?.folders?.[0] || null);
     } else if (currentId) {
       setCurrentFolder(data?.folderDetail?.files || null);
     }
@@ -63,7 +63,7 @@ const Folder = () => {
             {currentId === "folders" ? `` : "/ " + currentFolder?.name}
           </h1>
         </div>
-        <DialogAddFolder parentFolderName={currentFolder} />
+        <DialogAddFolder parentFolderName={currentFolder || undefined} />
       </div>
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center"></div>
@@ -86,7 +86,7 @@ const Folder = () => {
         <TabsContent value="grid" className="mt-10 rounded-lg h-screen">
           {location.pathname === "/dashboard/folders" ? (
             <div className="grid grid-cols-4 gap-6">
-              {currentFolder && currentFolder.length > 0 ? (
+              {currentFolder !== null ? (
                 <>
                   {data?.folders?.map((folder: IFolder) => (
                     <Link
@@ -151,7 +151,7 @@ const Folder = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500">No files found</p>
+                <p className="text-gray-500 text-center">No files found</p>
               )}
             </div>
           )}
@@ -167,19 +167,21 @@ const Folder = () => {
             <TableBody>
               {location.pathname === "/dashboard/folders" ? (
                 <>
-                  {currentFolder && currentFolder.length > 0 ? (
+                  {currentFolder !== null ? (
                     <>
-                      {data?.folderDetail?.map((folder: IFolder) => (
+                      {data?.folders?.map((folder: IFolder) => (
                         <TableRow
                           className="hover:bg-blue-50 hover:cursor-pointer"
                           key={folder.id}
                         >
-                          <TableCell>
-                            <div className="flex items-center space-x-2">
-                              <FaFolder className="text-blue-500" size={20} />
-                              <span>{folder.name}</span>
-                            </div>
-                          </TableCell>
+                          <Link to={`/dashboard/folders/${folder.id}`}>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
+                                <FaFolder className="text-blue-500" size={20} />
+                                <span>{folder.name}</span>
+                              </div>
+                            </TableCell>
+                          </Link>
                           <TableCell>
                             <span>
                               {moment(folder.createdAt).format("DD MMM YYYY")}
