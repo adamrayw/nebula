@@ -6,5 +6,5 @@ export interface ICategory {
     name?: number;
     createdAt?: string;
     updatedAt?: string;
-    Files: IFile
+    files: IFile
 }

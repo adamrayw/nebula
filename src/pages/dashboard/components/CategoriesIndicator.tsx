@@ -22,7 +22,13 @@ const CategoriesIndicator = () => {
   };
 
   return (
-    <section className="my-10">
+    <section className="my-10 space-y-5">
+      <h1>
+        <span className="text-2xl font-semibold">My Categories</span>
+        <span className="text-sm text-gray-500 ml-2">
+          {data?.data.length} categories
+        </span>
+      </h1>
       <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2 gap-x-4 lg:gap-y-0 gap-y-2 place-items-center">
         {data?.data.map((category: ICategory) => (
           <Card key={category.id} className=" w-full p-5 space-y-2">
@@ -32,7 +38,24 @@ const CategoriesIndicator = () => {
             <h3 className="sm:text-sm lg:font-medium md:font-medium">
               {category.name}
             </h3>
-            <p className="text-xs">{category?.Files?.length} items</p>
+            <p className="text-xs">{category?.files?.length} items</p>
+          </Card>
+        ))}
+      </div>
+      <h1 className="text-2xl font-semibold">My Categories</h1>
+      <span className="text-sm text-gray-500 ml-2">
+        {data?.data.length} categories
+      </span>
+      <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2 gap-x-4 lg:gap-y-0 gap-y-2 place-items-center">
+        {data?.data.map((category: ICategory) => (
+          <Card key={category.id} className=" w-full p-5 space-y-2">
+            {icons[category.slug as keyof typeof icons] || (
+              <FaFile size="24" className="text-green-500" />
+            )}
+            <h3 className="sm:text-sm lg:font-medium md:font-medium">
+              {category.name}
+            </h3>
+            <p className="text-xs">{category?.files?.length} items</p>
           </Card>
         ))}
       </div>

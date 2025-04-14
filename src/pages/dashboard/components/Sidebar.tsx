@@ -15,6 +15,7 @@ import {
   CreditCard,
   FileClock,
   Files,
+  Folders,
   HardDrive,
   Lock,
   LogOut,
@@ -56,6 +57,12 @@ const SidebarDashboard = () => {
       title: "My Files",
       url: "/dashboard",
       icon: <Files />,
+      isPaid: false,
+    },
+    {
+      title: "My Folders",
+      url: "/dashboard/folders",
+      icon: <Folders />,
       isPaid: false,
     },
     {
