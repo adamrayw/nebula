@@ -5,7 +5,18 @@ export interface IFolder {
   userId?: string;
   createdAt?: string;
   updatedAt?: string;
-  files: 
+  files?: IFile[];
+  folders?: IFolder[];
 }
 
-export interface IFiles {}
+export interface IFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  url: string;
+  createdAt?: string;
+  updatedAt?: string;
+  folderId?: string;
+  deletedAt?: string | null;
+}
