@@ -9,14 +9,6 @@ import {
   DialogTrigger,
 } from "@/pages/core/components/design-system/ui/dialog";
 import { Input } from "@/pages/core/components/design-system/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/pages/core/components/design-system/ui/select";
-import { IFolder } from "@/types/IFolder";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
@@ -30,7 +22,6 @@ import {
   FormItem,
   FormLabel,
 } from "@/pages/core/components/design-system/ui/form";
-import { useFetchFolders } from "@/queries/useFetchFiles";
 
 const formSchema = z.object({
   folderName: z
@@ -39,10 +30,18 @@ const formSchema = z.object({
     .max(50, {
       message: "Folder name must be less than 50 characters",
     }),
-  parentId: z.string().uuid().optional(),
+  parentId: z.string().optional(),
 });
 
-const DialogAddFolder = ({ parentFolderName }) => {
+interface DialogAddFolderProps {
+  parentFolderName?: {
+    id?: string;
+    name?: string;
+    parentId?: string;
+  };
+}
+
+const DialogAddFolder = ({ parentFolderName }: DialogAddFolderProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const fileServiceUrl = import.meta.env.VITE_FILE_SERVICE_URL;
   const queryClient = useQueryClient();
@@ -52,7 +51,7 @@ const DialogAddFolder = ({ parentFolderName }) => {
 
   const createNewFolderData = {
     folderName: folderName,
-    parentId: parentFolderName.id,
+    parentId: parentFolderName?.id,
     userId,
   };
 
@@ -83,7 +82,7 @@ const DialogAddFolder = ({ parentFolderName }) => {
     defaultValues: {
       folderName: "",
       parentId: "root",
-    },
+    } as z.infer<typeof formSchema>,
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -92,7 +91,6 @@ const DialogAddFolder = ({ parentFolderName }) => {
     setFolderName(folderName);
     setParentId(parentId || "root");
     createFolderHandler.mutate();
-    console.log(values)
   }
 
   useEffect(() => {
@@ -131,7 +129,7 @@ const DialogAddFolder = ({ parentFolderName }) => {
             <div className="flex flex-col space-y-2">
               <p>Create a new folder</p>
               <p className="text-xs font-light text-gray-500">
-                Parent Folder: {parentFolderName.name}
+                Parent Folder: {parentFolderName?.name ? parentFolderName.name : "root"}
               </p>
             </div>
           </DialogTitle>
