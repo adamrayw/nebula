@@ -70,7 +70,7 @@ export function useFetchFileFolders(currentId: string, enabled: boolean = true) 
             } else {
                 // Subfolder case
                 return {
-                    folderDetail: response.data,
+                    folderDetail: response.data.files,
                     folders: response.data.folders,
                     files: response.data.files.files,
                 }
