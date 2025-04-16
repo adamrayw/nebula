@@ -26,6 +26,7 @@ const Folder = () => {
   const location = useLocation();
   const [folderHierarchy, setFolderHierarchy] = useState<string[]>([]);
   const [currentFolder, setCurrentFolder] = useState<IFolder | null>(null);
+  const [detailFolder, setDetailFolder] = useState<IFolder | null>(null);
 
   useEffect(() => {
     const subPath = location.pathname.replace("/dashboard/folders/", "");
@@ -41,10 +42,16 @@ const Folder = () => {
   );
 
   useEffect(() => {
+    // for folder content
     if (currentId === "folders") {
       setCurrentFolder(data?.folders?.[0] || null);
+      setDetailFolder({
+        name: "All Folders",
+        parentId: null,
+      });
     } else if (currentId) {
-      setCurrentFolder(data?.folderDetail?.files || null);
+      setCurrentFolder(data?.folderDetail || null);
+      setDetailFolder(data?.folderDetail || null);
     }
   }, [refetch, data]);
 
@@ -60,10 +67,25 @@ const Folder = () => {
             <h1 className="text-2xl font-semibold mb-5">All Folders</h1>
           </Link>
           <h1 className="text-2xl font-semibold mb-5">
-            {currentId === "folders" ? `` : "/ " + currentFolder?.name}
+            {isLoading ? (
+              <div className="bg-gray-200 h-2 w-24 rounded-full mt-2 ml-2"></div>
+            ) : (
+              <>{currentId === "folders" ? `` : "/ " + currentFolder?.name}</>
+            )}
           </h1>
         </div>
-        <DialogAddFolder parentFolderName={currentFolder || undefined} />
+        <div className={`${isLoading && "sr-only"}`}>
+          <DialogAddFolder
+            parentFolderName={
+              detailFolder
+                ? {
+                    ...detailFolder,
+                    parentId: detailFolder.parentId ?? undefined,
+                  }
+                : undefined
+            }
+          />
+        </div>
       </div>
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center"></div>
@@ -71,7 +93,7 @@ const Folder = () => {
       <Tabs defaultValue="grid" className="w-full">
         <div className="flex flex-row-reverse justify-between">
           <div>
-            <TabsList className="grid grid-cols-2">
+            <TabsList className={`grid grid-cols-2 ${isLoading && "sr-only"}`}>
               <TabsTrigger value="grid">
                 <LayoutGrid className="mr-2" size={16} />
                 Grid
@@ -84,76 +106,117 @@ const Folder = () => {
           </div>
         </div>
         <TabsContent value="grid" className="mt-10 rounded-lg h-screen">
-          {location.pathname === "/dashboard/folders" ? (
-            <div className="grid grid-cols-4 gap-6">
-              {currentFolder !== null ? (
-                <>
-                  {data?.folders?.map((folder: IFolder) => (
-                    <Link
-                      to={`/dashboard/folders/${folder.id}`}
-                      key={folder.id}
-                      className="p-6 rounded-lg flex flex-col items-center space-y-2 justify-center group hover:bg-blue-50 hover:text-gray-600 transition duration-300 ease-in-out hover:cursor-pointer "
-                    >
-                      <FaFolder
-                        className="text-blue-500 group-hover:text-blue-600 transition duration-300 ease-in-out"
-                        size={60}
-                      />
-                      <p>
-                        <span className="text-sm font-semibold">
-                          {folder.name}
-                        </span>
-                      </p>
-                    </Link>
-                  ))}
-                </>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full">
-                  <p className="text-gray-500">No folders found</p>
-                  <Link
-                    to="/dashboard/folders"
-                    className="text-blue-500 hover:underline mt-2"
-                  >
-                    Create a new folder
-                  </Link>
-                </div>
-              )}
+          {isLoading ? (
+            <div className="grid grid-cols-4 gap-x-6 gap-y-20 ">
+              <div className="flex flex-col items-center justify-center animate-pulse space-y-2">
+                <FaFolder className="text-gray-200" size={60} />
+                <div className=" bg-gray-200 h-2 w-24 rounded-full mt-2"></div>
+              </div>
+              <div className="flex flex-col items-center justify-center animate-pulse space-y-2">
+                <FaFolder className="text-gray-200" size={60} />
+                <div className=" bg-gray-200 h-2 w-24 rounded-full mt-2"></div>
+              </div>
+              <div className="flex flex-col items-center justify-center animate-pulse space-y-2">
+                <FaFolder className="text-gray-200" size={60} />
+                <div className=" bg-gray-200 h-2 w-24 rounded-full mt-2"></div>
+              </div>
+              <div className="flex flex-col items-center justify-center animate-pulse space-y-2">
+                <FaFolder className="text-gray-200" size={60} />
+                <div className=" bg-gray-200 h-2 w-24 rounded-full mt-2"></div>
+              </div>
+              <div className="flex flex-col items-center justify-center animate-pulse space-y-2">
+                <FaFolder className="text-gray-200" size={60} />
+                <div className=" bg-gray-200 h-2 w-24 rounded-full mt-2"></div>
+              </div>
+              <div className="flex flex-col items-center justify-center animate-pulse space-y-2">
+                <FaFolder className="text-gray-200" size={60} />
+                <div className=" bg-gray-200 h-2 w-24 rounded-full mt-2"></div>
+              </div>
+              <div className="flex flex-col items-center justify-center animate-pulse space-y-2">
+                <FaFolder className="text-gray-200" size={60} />
+                <div className=" bg-gray-200 h-2 w-24 rounded-full mt-2"></div>
+              </div>
+              <div className="flex flex-col items-center justify-center animate-pulse space-y-2">
+                <FaFolder className="text-gray-200" size={60} />
+                <div className=" bg-gray-200 h-2 w-24 rounded-full mt-2"></div>
+              </div>
             </div>
           ) : (
-            <div>
-              {(data?.files ?? []).length > 0 ? (
+            <>
+              {location.pathname === "/dashboard/folders" ? (
                 <div className="grid grid-cols-4 gap-6">
-                  {data?.folders?.map((folder) => (
-                    <Link
-                      to={`/dashboard/folders/${folder.id}`}
-                      key={folder.id}
-                      className="p-6 rounded-lg flex flex-col items-center space-y-2 justify-center group hover:bg-blue-50 hover:text-gray-600 transition duration-300 ease-in-out hover:cursor-pointer "
-                    >
-                      <FaFolder
-                        className="text-blue-500 group-hover:text-blue-600 transition duration-300 ease-in-out"
-                        size={60}
-                      />
-                      <p>
-                        <span className="text-sm font-semibold">
-                          {folder.name}
-                        </span>
-                      </p>
-                    </Link>
-                  ))}
-
-                  {data?.files?.map((file) => (
-                    <div
-                      key={file.id}
-                      className="flex flex-col justify-center items-center space-y-2"
-                    >
-                      <FileIcon size={10} url={file.originalName || ""} />
-                      <p className="truncate max-w-64">{file.originalName}</p>
+                  {currentFolder !== null ? (
+                    <>
+                      {data?.folders?.map((folder: IFolder) => (
+                        <Link
+                          to={`/dashboard/folders/${folder.id}`}
+                          key={folder.id}
+                          className="p-6 rounded-lg flex flex-col items-center space-y-2 justify-center group hover:bg-blue-50 hover:text-gray-600 transition duration-300 ease-in-out hover:cursor-pointer "
+                        >
+                          <FaFolder
+                            className="text-blue-500 group-hover:text-blue-600 transition duration-300 ease-in-out"
+                            size={60}
+                          />
+                          <p>
+                            <span className="text-sm font-semibold">
+                              {folder.name}
+                            </span>
+                          </p>
+                        </Link>
+                      ))}
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <p className="text-gray-500">No folders found</p>
+                      <Link
+                        to="/dashboard/folders"
+                        className="text-blue-500 hover:underline mt-2"
+                      >
+                        Create a new folder
+                      </Link>
                     </div>
-                  ))}
+                  )}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center">No files found</p>
+                <div>
+                  {(data?.folders ?? []).length > 0 ? (
+                    <div className="grid grid-cols-4 gap-6">
+                      {data?.folders?.map((folder) => (
+                        <Link
+                          to={`/dashboard/folders/${folder.id}`}
+                          key={folder.id}
+                          className="p-6 rounded-lg flex flex-col items-center space-y-2 justify-center group hover:bg-blue-50 hover:text-gray-600 transition duration-300 ease-in-out hover:cursor-pointer "
+                        >
+                          <FaFolder
+                            className="text-blue-500 group-hover:text-blue-600 transition duration-300 ease-in-out"
+                            size={60}
+                          />
+                          <p>
+                            <span className="text-sm font-semibold">
+                              {folder.name}
+                            </span>
+                          </p>
+                        </Link>
+                      ))}
+
+                      {data?.files?.map((file) => (
+                        <div
+                          key={file.id}
+                          className="flex flex-col justify-center items-center space-y-2"
+                        >
+                          <FileIcon size={10} url={file.originalName || ""} />
+                          <p className="truncate max-w-64">
+                            {file.originalName}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-center">No files found</p>
+                  )}
+                </div>
               )}
-            </div>
+            </>
           )}
         </TabsContent>
         <TabsContent value="list">
