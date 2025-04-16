@@ -1,7 +1,7 @@
 export interface IFolder {
-  id: string;
+  id?: string;
   name?: string;
-  parentId?: string;
+  parentId?: string | null;
   userId?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -19,4 +19,12 @@ export interface IFile {
   updatedAt?: string;
   folderId?: string;
   deletedAt?: string | null;
+}
+
+export interface DialogAddFolderProps {
+  parentFolderName?: {
+    id?: string;
+    name?: string;
+    parentId?: string;
+  };
 }
