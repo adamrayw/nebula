@@ -5,6 +5,8 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/pages/core/components/design-system/ui/dialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -56,9 +58,9 @@ const DialogDeletePermanent = ({
       </DialogTrigger>
       {/* <DialogContent> */}
       <DialogContent className="sm:max-w-[425px]">
-        {/* <DialogHeader>
-          <DialogTitle>Confirm Delete</DialogTitle>
-        </DialogHeader> */}
+        <DialogHeader>
+          <DialogTitle className="sr-only">Confirm Delete</DialogTitle>
+        </DialogHeader>
 
         <DialogDescription>
           <p className="text-center text-base py-8">
