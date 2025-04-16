@@ -26,5 +26,5 @@ export interface DialogAddFolderProps {
     id?: string;
     name?: string;
     parentId?: string;
-  };
-}
+  } | undefined;
+};
