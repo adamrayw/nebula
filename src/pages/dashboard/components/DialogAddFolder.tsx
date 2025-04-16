@@ -22,6 +22,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/pages/core/components/design-system/ui/form";
+import { DialogAddFolderProps } from "@/types/IFolder";
 
 const formSchema = z.object({
   folderName: z
@@ -33,19 +34,12 @@ const formSchema = z.object({
   parentId: z.string().optional(),
 });
 
-interface DialogAddFolderProps {
-  parentFolderName?: {
-    id?: string;
-    name?: string;
-    parentId?: string;
-  };
-}
-
 const DialogAddFolder = ({ parentFolderName }: DialogAddFolderProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const fileServiceUrl = import.meta.env.VITE_FILE_SERVICE_URL;
   const queryClient = useQueryClient();
   const [folderName, setFolderName] = useState<string>("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [parentId, setParentId] = useState<string>("root");
   const userId = JSON.parse(localStorage.getItem("user")!)?.id;
 
