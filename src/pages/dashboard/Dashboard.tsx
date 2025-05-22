@@ -25,7 +25,7 @@ import {
 import moment from "moment";
 import FileIcon from "./components/FileIcon";
 import { IFile } from "@/types/IFile";
-import { Download, Ellipsis, Star } from "lucide-react";
+import { Download, Ellipsis, Pin, Star } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -50,6 +50,7 @@ import CategoriesIndicator from "./components/CategoriesIndicator";
 import { apiRequest } from "@/api/apiService";
 import Notification from "../core/components/Notification";
 import DialogConfirmDelete from "./components/DIalogMoveToTrash";
+import QuickAccess from "./components/QuickAccess";
 
 const Dashboard = () => {
   const [search, setSearch] = useState<string>("");
@@ -59,6 +60,7 @@ const Dashboard = () => {
   const [sortOrder, setSortOrder] = useState<string>("DESC");
   const queryClient = useQueryClient();
   const starredServiceUrl = import.meta.env.VITE_STARRED_SERVICE_URL;
+  const fileServiceUrl = import.meta.env.VITE_FILE_SERVICE_URL;
 
   const isFirstRender = useRef({
     effect1: true,
@@ -71,6 +73,64 @@ const Dashboard = () => {
     sortBy,
     sortOrder
   );
+
+  const handlePinQuickAccess = useMutation({
+    mutationFn: async (fileId: string) => {
+      return await apiRequest(
+        `post`,
+        fileServiceUrl,
+        `/file/pin?fileId=${fileId}`
+      );
+    },
+    onSuccess: () => {
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["quickAccess"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["files"],
+        }),
+      ]);
+    },
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 500) {
+        toast("File already pinned to Quick Access", {
+          icon: "⚠️",
+        });
+      } else {
+        toast.error(error.message);
+      }
+    },
+  });
+
+  const handleUnpinQuickAccess = useMutation({
+    mutationFn: async (fileId: string) => {
+      return await apiRequest(
+        `delete`,
+        fileServiceUrl,
+        `/file/unpin?fileId=${fileId}`
+      );
+    },
+    onSuccess: () => {
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["quickAccess"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["files"],
+        }),
+      ]);
+    },
+    onError: (error: AxiosError) => {
+      if (error.response?.status === 500) {
+        toast("File already unpinned from Quick Access", {
+          icon: "⚠️",
+        });
+      } else {
+        toast.error(error.message);
+      }
+    },
+  });
 
   useEffect(() => {
     if (isError) {
@@ -172,6 +232,7 @@ const Dashboard = () => {
           </div>
         </div>
         <CategoriesIndicator />
+        <QuickAccess />
         <Tabs defaultValue="files" className="mt-10">
           <TabsList>
             <TabsTrigger value="files" className="tab">
@@ -308,8 +369,31 @@ const Dashboard = () => {
                                 <Ellipsis />
                               </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-48 p-2" asChild>
+                            <PopoverContent className="w-auto p-2" asChild>
                               <div className="flex flex-col space-y-2 justify-start items-start">
+                                {file.quickAccess === null ? (
+                                  <Button
+                                    variant="ghost"
+                                    className="w-full fex justify-start"
+                                    onClick={() => {
+                                      handlePinQuickAccess.mutate(file.id);
+                                    }}
+                                  >
+                                    <Pin />
+                                    Pin to Quick Access
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant="ghost"
+                                    className="w-full fex justify-start"
+                                    onClick={() => {
+                                      handleUnpinQuickAccess.mutate(file.id);
+                                    }}
+                                  >
+                                    <Pin />
+                                    Unpin from Quick Access
+                                  </Button>
+                                )}
                                 <Button
                                   variant="ghost"
                                   asChild

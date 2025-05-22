@@ -7,6 +7,16 @@ interface Starred {
   createdAt: string;
   updatedAt: string;
 }
+
+interface quickAccess {
+  id: string;
+  userId: string;
+  targetId: string;
+  type: string;
+  pinnedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
 export interface IFile {
   length: ReactNode;
   id: string;
@@ -20,6 +30,7 @@ export interface IFile {
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string;
+  quickAccess?: quickAccess;
   starred: Starred;
 }
 
