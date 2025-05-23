@@ -94,7 +94,7 @@ const Dashboard = () => {
     },
     onError: (error: AxiosError) => {
       if (error.response?.status === 500) {
-        toast("File already pinned to Quick Access", {
+        toast((error.response?.data as { message: string })?.message, {
           icon: "⚠️",
         });
       } else {
