@@ -18,8 +18,8 @@ const QuickAccess = () => {
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2 gap-4 lg:gap-y-4 place-items-center">
           {data?.data.map((item: IQuickAccess) => (
             <Card key={item.id} className="w-full p-5 space-y-2">
-              <div className="flex items-center space-x-2">
-                <FileIcon url={item.file.originalName || ""} />
+              <div className="flex flex-col items-center space-y-4">
+                <FileIcon url={item.file.originalName || ""} size={10} />
                 <h3 className="sm:text-sm lg:font-medium md:font-medium truncate">
                   {item.file.originalName}
                 </h3>
